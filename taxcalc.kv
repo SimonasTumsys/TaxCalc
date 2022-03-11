@@ -1,0 +1,181 @@
+#:import utils kivy.utils
+#:import F kivy.factory.Factory
+#: import NoTransition kivy.uix.screenmanager.NoTransition
+
+WindowManager:
+    MainWindow:
+    CalcWindow:
+    EarnWindow:
+    StatWindow:
+    SettWindow:
+
+<RoundedButton@Button>:
+    background_color: (0,0,0,0)
+    back_color: utils.get_color_from_hex('#1D7046') ## Green
+    back_color_press: utils.get_color_from_hex('#209552') ## Light Green
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [22]
+            
+<StrokeButton@Button>:
+    background_color: (0,0,0,0)
+    background_normal: ''
+    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
+    back_color_press: utils.get_color_from_hex('#242725') ## Green
+    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    border_radius: 25
+    bold: True
+    ##Font color:
+    color: self.back_color_press if self.state == 'normal' else self.font_color_press
+    canvas.before:
+    ##Color when pressed and not pressed:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [25]
+    ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rounded_rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1], self.border_radius)
+            width: 2
+
+<MainWindow>:
+    ## App's background color
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex('#49534C')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    name: "main"
+    size: root.size
+
+    FloatLayout:
+    
+        Image:
+            id: 'main_banner'
+            source: 'app-banner2.png'
+            size: self.texture_size
+            pos_hint: {'center_x':0.3, 'center_y': 0.825}
+            size_hint: (0.5, 0.5)
+
+
+        BoxLayout:
+            spacing: 10
+            orientation: "vertical"
+            size_hint: 0.80, 0.5
+            pos_hint: {'center_x': .5, 'center_y': .4}
+        
+
+            StrokeButton:
+                font_size: (root.width + root.height) / 30
+                text: root.main_window_labels['calc']
+                font_name: 'DejaVuSans'
+                on_release:
+                    root.manager.transition = NoTransition()
+                    app.root.current = "calc"
+
+
+            StrokeButton:
+                font_size: (root.width + root.height) / 30
+                text: root.main_window_labels['enter_earn']
+                font_name: 'DejaVuSans'
+                
+                
+            
+            StrokeButton:
+                font_size: (root.width + root.height) / 30
+                text: root.main_window_labels['stats']
+                font_name: 'DejaVuSans'
+                
+
+
+            StrokeButton:
+                font_size: (root.width + root.height) / 30
+                text: root.main_window_labels['sett']
+                font_name: 'DejaVuSans'
+                
+            
+
+<CalcWindow>:
+    name: "calc"
+
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex('#152472')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    GridLayout:
+        size_hint: 0.85, 0.5
+        pos_hint: {'center_x': .5, 'center_y': .65}
+        cols: 1
+        spacing: [0,10]
+        
+        TextInput:
+            pos_hint: {'center_x': .5, 'center_y': .85}
+            size_hint: 0.4, 0.2
+            id: brutt_earn
+            multiline: False
+            font_size: (root.width + root.height) / 55
+            hint_text: 'Įveskite sumą prieš mokesčius'
+            hint_text_color: utils.get_color_from_hex('#636469')
+            input_filter: 'float'
+        
+
+        GridLayout:
+            cols: 2
+            spacing: [5,100]
+            row_force_default: True
+            row_default_height: self.height*0.2
+            RoundedButton:
+                font_size: (root.width + root.height) / 35
+                text: "Pateikti"
+                color: utils.get_color_from_hex('#D3D3D3')
+                on_release:
+                    root.calculate()
+
+                
+            RoundedButton:
+                font_size: (root.width + root.height) / 35
+                text: "Grįžti"
+                color: utils.get_color_from_hex('#D3D3D3')
+                on_release: 
+                    app.root.current = "main"
+                    root.manager.transition = NoTransition()
+
+
+<EarnWindow>:
+    name: "earn"
+
+<StatWindow>:
+    name: "stat"
+
+<SettWindow>:
+    name: "sett"
+
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex('#152472')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    GridLayout:
+        size_hint: 0.85, 0.5
+        pos_hint: {'center_x': .5, 'center_y': .65}
+        cols: 1
+        spacing: [0,10]
+
+    
+        
