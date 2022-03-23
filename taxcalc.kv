@@ -180,7 +180,7 @@ WindowManager:
             ##Language setting label and button
             Label:
                 font_size: (root.width + root.height) / 50
-                font_color:
+                color: utils.get_color_from_hex('#D3D3D3')
                 text: app.lang_data[4]['lang']
             BoxLayout:
                 orientation: 'horizontal'
@@ -189,10 +189,13 @@ WindowManager:
                     id: lng_button_lt
                     text: 'Lietuvių'
                     group: 'lng'
+                    state: 'down' if app.settings['language'] == 'lt' else 'normal'
+                    
                 SettingsToggleButton:
                     id: lng_button_en
                     text: 'English'
                     group: 'lng'
+                    state: 'down' if app.settings['language'] == 'en' else 'normal'
 
         Separator:
 
@@ -205,7 +208,7 @@ WindowManager:
             ##PSD setting label and button
             Label:
                 font_size: (root.width + root.height) / 50
-                font_color:
+                color: utils.get_color_from_hex('#D3D3D3')
                 text: app.lang_data[4]['fixed_psd']
             BoxLayout:
                 orientation: 'horizontal'
@@ -214,10 +217,12 @@ WindowManager:
                     id: psd_button_true
                     text: app.lang_data[4]['yes']
                     group: 'psd'
+                    state: 'down' if app.settings['psd_fixed'] == True else 'normal'
                 SettingsToggleButton:
                     id: psd_button_false
                     text: app.lang_data[4]['no']
                     group: 'psd'
+                    state: 'down' if app.settings['psd_fixed'] == False else 'normal'
 
         Separator:
 
@@ -230,7 +235,7 @@ WindowManager:
             ##Spending setting label and button
             Label:
                 font_size: (root.width + root.height) / 50
-                font_color:
+                color: utils.get_color_from_hex('#D3D3D3')
                 text: app.lang_data[4]['spend_30']
             BoxLayout:
                 orientation: 'horizontal'
@@ -239,10 +244,13 @@ WindowManager:
                     id: spend_button_true
                     text: app.lang_data[4]['yes']
                     group: 'spend'
+                    state: 'down' if app.settings['spend_30_percent'] == True else 'normal'
                 SettingsToggleButton:
                     id: spend_button_false
                     text: app.lang_data[4]['no']
                     group: 'spend'
+                    state: 'down' if app.settings['spend_30_percent'] == False else 'normal'
+
 
         Separator:
 
@@ -255,7 +263,7 @@ WindowManager:
             ##Pension setting label and button
             Label:
                 font_size: (root.width + root.height) / 50
-                font_color:
+                color: utils.get_color_from_hex('#D3D3D3')
                 text: app.lang_data[4]['pension']
             BoxLayout:
                 orientation: 'horizontal'
@@ -264,15 +272,18 @@ WindowManager:
                     id: pension0
                     text: '0'
                     group: 'pension'
+                    state: 'down' if app.settings['pension'] == 0 else 'normal'
                 SettingsToggleButton:
                     id: pension27
                     text: '2.7%'
                     group: 'pension'
+                    state: 'down' if app.settings['pension'] == 2.7 else 'normal'
                 SettingsToggleButton:
                     id: pension3
                     text: '3%'
                     group: 'pension'
-
+                    state: 'down' if app.settings['pension'] == 3 else 'normal'
+                    
         Separator:
 
         GridLayout:
@@ -286,6 +297,8 @@ WindowManager:
                 text: app.lang_data[4]['save']
                 on_release:
                     root.save_settings()
+                    app.lang_data
+                    app.root.current = 'main'
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35

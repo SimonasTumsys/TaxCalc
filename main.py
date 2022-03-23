@@ -31,7 +31,36 @@ class StatWindow(Screen):
     pass
 
 class SettWindow(Screen):
-    pass
+    def save_settings(self):
+        with open('settings.json', 'r') as f:
+            settings = json.load(f)
+
+
+        if self.ids.lng_button_lt.state == 'down':
+            settings['language'] = 'lt'
+        else: 
+            settings['language'] = 'en'
+
+        if self.ids.psd_button_true.state == 'down':
+            settings['psd_fixed'] = True
+        else:
+            settings['psd_fixed'] = False
+        
+        if self.ids.spend_button_true.state == 'down':
+            settings['spend_30_percent'] = True
+        else:
+            settings['spend_30_percent'] = False
+
+        if self.ids.pension0.state == 'down':
+            settings['pension'] = 0
+        elif self.ids.pension27.state == 'down':
+            settings['pension'] = 2.7
+        else:
+            settings['pension'] = 3
+
+        with open('settings.json', 'w') as f:
+            json.dump(settings, f, indent=2)
+
 
 class WindowManager(ScreenManager):
     pass
@@ -49,9 +78,9 @@ class TaxCalc(App):
             lang_data = lang_data[lang]
         return lang_data
 
+
     lang_data = get_lang()
-
-
+    settings = get_sett()
 
 TaxCalc().run()
 
