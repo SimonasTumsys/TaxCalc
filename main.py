@@ -3,29 +3,29 @@ from kivymd.uix.screen import Screen
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
-
-
+import json
 
 class MainWindow(Screen):
+    pass
+    # print(get_lang('lt')[0]['calc'])
+    # def get_lang(lng):
+    #     if lng == 'lt':
+    #         main_window_labels = {
+    #             "calc": "Skaičiuoklė",
+    #             "enter_earn": "Įvesti uždarbį",
+    #             "stats": "Statistika",
+    #             "sett": "Nustatymai"
+    #         }
+    #     else: main_window_labels = {
+    #             "calc": "Calculator",
+    #             "enter_earn": "Enter earnings",
+    #             "stats": "Statistics",
+    #             "sett": "Settings"
+    #     }
 
-    def get_lang(lng):
-        if lng == 'lt':
-            main_window_labels = {
-                "calc": "Skaičiuoklė",
-                "enter_earn": "Įvesti uždarbį",
-                "stats": "Statistika",
-                "sett": "Nustatymai"
-            }
-        else: main_window_labels = {
-                "calc": "Calculator",
-                "enter_earn": "Enter earnings",
-                "stats": "Statistics",
-                "sett": "Settings"
-        }
+    #     return main_window_labels
 
-        return main_window_labels
-
-    main_window_labels = get_lang('lt')
+    # main_window_labels = get_lang('lt')
 
 
 class CalcWindow(Screen):
@@ -60,7 +60,20 @@ class WindowManager(ScreenManager):
 
 
 class TaxCalc(App):
-    pass
+    def get_sett():
+        with open('settings.json') as f:
+            settings = json.load(f)
+        return settings
+    
+    def get_lang(lang = get_sett()['language']):
+        with open('language.json', encoding='utf-8') as f:
+            lang_data = json.load(f)
+            lang_data = lang_data[lang]
+        return lang_data
+
+    lang_data = get_lang()
+
+
 
 TaxCalc().run()
 

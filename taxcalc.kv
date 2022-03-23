@@ -82,24 +82,24 @@ WindowManager:
 
             StrokeButton: ##Calculator button 
                 font_size: (root.width + root.height) / 30
-                text: root.main_window_labels['calc']
+                text: app.lang_data['calc']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = "calc"
 
             StrokeButton: ##Enter earnings button
                 font_size: (root.width + root.height) / 30
-                text: root.main_window_labels['enter_earn']
+                # text: root.main_window_labels['enter_earn']
                 font_name: 'DejaVuSans'
             
             StrokeButton: ##Statistics button
                 font_size: (root.width + root.height) / 30
-                text: root.main_window_labels['stats']
+                # text: root.main_window_labels['stats']
                 font_name: 'DejaVuSans'
                 
             StrokeButton: ##Settings button
                 font_size: (root.width + root.height) / 30
-                text: root.main_window_labels['sett']
+                # text: root.main_window_labels['sett']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'sett'
