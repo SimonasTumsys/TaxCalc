@@ -206,17 +206,17 @@ WindowManager:
             Label:
                 font_size: (root.width + root.height) / 50
                 font_color:
-                text: 'Fiksuotas PSD'
+                text: app.lang_data[4]['fixed_psd']
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
                 SettingsToggleButton:
                     id: psd_button_true
-                    text: 'Taip'
+                    text: app.lang_data[4]['yes']
                     group: 'psd'
                 SettingsToggleButton:
                     id: psd_button_false
-                    text: 'Ne'
+                    text: app.lang_data[4]['no']
                     group: 'psd'
 
         Separator:
@@ -231,17 +231,17 @@ WindowManager:
             Label:
                 font_size: (root.width + root.height) / 50
                 font_color:
-                text: 'Išlaidos 30%'
+                text: app.lang_data[4]['spend_30']
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
                 SettingsToggleButton:
                     id: spend_button_true
-                    text: 'Taip'
+                    text: app.lang_data[4]['yes']
                     group: 'spend'
                 SettingsToggleButton:
                     id: spend_button_false
-                    text: 'Ne'
+                    text: app.lang_data[4]['no']
                     group: 'spend'
 
         Separator:
@@ -256,7 +256,7 @@ WindowManager:
             Label:
                 font_size: (root.width + root.height) / 50
                 font_color:
-                text: 'Pensija'
+                text: app.lang_data[4]['pension']
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
@@ -283,13 +283,13 @@ WindowManager:
             padding: 30
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: "Išsaugoti"
+                text: app.lang_data[4]['save']
                 on_release:
                     root.save_settings()
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: "Atšaukti"
+                text: app.lang_data[4]['cancel']
                 on_release: 
                     app.root.current = "main"
 
