@@ -82,24 +82,24 @@ WindowManager:
 
             StrokeButton: ##Calculator button 
                 font_size: (root.width + root.height) / 30
-                text: app.lang_data['calc']
+                text: app.lang_data[0]['calc']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = "calc"
 
             StrokeButton: ##Enter earnings button
                 font_size: (root.width + root.height) / 30
-                # text: root.main_window_labels['enter_earn']
+                text: app.lang_data[0]['enter_earn']
                 font_name: 'DejaVuSans'
             
             StrokeButton: ##Statistics button
                 font_size: (root.width + root.height) / 30
-                # text: root.main_window_labels['stats']
+                text: app.lang_data[0]['stats']
                 font_name: 'DejaVuSans'
                 
             StrokeButton: ##Settings button
                 font_size: (root.width + root.height) / 30
-                # text: root.main_window_labels['sett']
+                text: app.lang_data[0]['sett']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'sett'
@@ -127,7 +127,7 @@ WindowManager:
             id: brutt_earn
             multiline: False
             font_size: (root.width + root.height) / 55
-            hint_text: 'Įveskite sumą prieš mokesčius'
+            hint_text: app.lang_data[1]['input_ph']
             hint_text_color: utils.get_color_from_hex('#636469')
             input_filter: 'float'
         
@@ -139,13 +139,13 @@ WindowManager:
             row_default_height: self.height*0.2
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: "Pateikti"
+                text: app.lang_data[1]['submit']
                 on_release:
                     root.calculate()
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: "Grįžti"
+                text: app.lang_data[1]['back']
                 on_release: 
                     app.root.current = "main"
 
@@ -181,7 +181,7 @@ WindowManager:
             Label:
                 font_size: (root.width + root.height) / 50
                 font_color:
-                text: 'Kalba'
+                text: app.lang_data[4]['lang']
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5

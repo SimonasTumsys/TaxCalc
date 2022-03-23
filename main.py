@@ -7,26 +7,6 @@ import json
 
 class MainWindow(Screen):
     pass
-    # print(get_lang('lt')[0]['calc'])
-    # def get_lang(lng):
-    #     if lng == 'lt':
-    #         main_window_labels = {
-    #             "calc": "Skaičiuoklė",
-    #             "enter_earn": "Įvesti uždarbį",
-    #             "stats": "Statistika",
-    #             "sett": "Nustatymai"
-    #         }
-    #     else: main_window_labels = {
-    #             "calc": "Calculator",
-    #             "enter_earn": "Enter earnings",
-    #             "stats": "Statistics",
-    #             "sett": "Settings"
-    #     }
-
-    #     return main_window_labels
-
-    # main_window_labels = get_lang('lt')
-
 
 class CalcWindow(Screen):
     brutt_earn = ObjectProperty(None)
@@ -42,8 +22,6 @@ class CalcWindow(Screen):
             pension_tax = (profit*0.9)*pension_rate
             total_tax = psd_tax + vsd_tax + pension_tax
             nett_earn = float(self.ids.brutt_earn.text) - total_tax
-
-
 
 
 class EarnWindow(Screen):

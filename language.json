@@ -1,16 +1,64 @@
 {
-    "lt":
-        {
-            "calc": "Skaičiuoklė",
-            "enter_earn": "Įvesti uždarbį",
-            "stats": "Statistika",
-            "sett": "Nustatymai"
-        },
-    "en":
-        {
-            "calc": "Calculator",
-            "enter_earn": "Enter earnings",
-            "stats": "Statistics",
-            "sett": "Settings"
-        }
+    "lt": [
+            {
+                "calc": "Skaičiuoklė",
+                "enter_earn": "Įvesti uždarbį",
+                "stats": "Statistika",
+                "sett": "Nustatymai"
+            },
+            {
+                "input_ph": "Įveskite sumą prieš mokesčius",
+                "submit": "Pateikti",
+                "back": "Grįžti"
+            },
+            {
+
+            },
+            {
+
+            },
+            {
+                "lang": "Kalba",
+                "lithuanian": "Lietuvių",
+                "english": "English",
+                "fixed_psd": "Fiksuotas PSD",
+                "yes": "Taip",
+                "no": "Ne",
+                "spend_30": "Išlaidos 30%",
+                "pension": "Pensija",
+                "save": "Išsaugoti",
+                "cancel": "Atšaukti"
+            }
+    ],
+    "en": [
+            {
+                "calc": "Calculator",
+                "enter_earn": "Enter earnings",
+                "stats": "Statistics",
+                "sett": "Settings"
+            },
+            {
+                "input_ph": "Enter your earnings before tax",
+                "submit": "Submit",
+                "back": "Back"
+            },
+            {
+
+            },
+            {
+
+            },
+            {
+                "lang": "Language",
+                "lithuanian": "Lietuvių",
+                "english": "English",
+                "fixed_psd": "Fixed PSD",
+                "yes": "Yes",
+                "no": "No",
+                "spend_30": "30% as spent",
+                "pension": "Pension rate",
+                "save": "Save",
+                "cancel": "Cancel"
+            }
+    ]
 }
