@@ -31,7 +31,7 @@ WindowManager:
     back_color_press: utils.get_color_from_hex('#242725') ## Black
     font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
     border_radius: 25
-    bold: True
+
     ##Font color:
     color: self.back_color_press if self.state == 'normal' else self.font_color_press
     canvas.before:
@@ -102,7 +102,7 @@ WindowManager:
                 text: root.main_window_labels['sett']
                 font_name: 'DejaVuSans'
                 on_release:
-                    app.open_settings()
+                    app.root.current = 'sett'
 
 
 <CalcWindow>:
@@ -166,17 +166,164 @@ WindowManager:
             pos: self.pos
             size: self.size
 
-    GridLayout:
-        size_hint: 1, 0.5
-        pos_hint: {'center_x': .5, 'center_y': .65}
-        cols: 1
-        spacing: [0,10]
+    ##Main layout
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 10
+        
+        ##Language setting layout
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
 
-        canvas.before:
-            Color:
-                rgba: utils.get_color_from_hex('#242725')
-            Line:
-                width: 10
-                points: [0,240,320,240]
+            ##Language setting label and button
+            Label:
+                font_size: (root.width + root.height) / 50
+                font_color:
+                text: 'Kalba'
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: lng_button_lt
+                    text: 'Lietuvių'
+                    group: 'lng'
+                SettingsToggleButton:
+                    id: lng_button_en
+                    text: 'English'
+                    group: 'lng'
 
-                
+        Separator:
+
+        ##PSD setting layout
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
+
+            ##PSD setting label and button
+            Label:
+                font_size: (root.width + root.height) / 50
+                font_color:
+                text: 'Fiksuotas PSD'
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: psd_button_true
+                    text: 'Taip'
+                    group: 'psd'
+                SettingsToggleButton:
+                    id: psd_button_false
+                    text: 'Ne'
+                    group: 'psd'
+
+        Separator:
+
+        ##Spending setting layout
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
+
+            ##Spending setting label and button
+            Label:
+                font_size: (root.width + root.height) / 50
+                font_color:
+                text: 'Išlaidos 30%'
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: spend_button_true
+                    text: 'Taip'
+                    group: 'spend'
+                SettingsToggleButton:
+                    id: spend_button_false
+                    text: 'Ne'
+                    group: 'spend'
+
+        Separator:
+
+        ##Pension setting layout
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
+
+            ##Pension setting label and button
+            Label:
+                font_size: (root.width + root.height) / 50
+                font_color:
+                text: 'Pensija'
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: pension0
+                    text: '0'
+                    group: 'pension'
+                SettingsToggleButton:
+                    id: pension27
+                    text: '2.7%'
+                    group: 'pension'
+                SettingsToggleButton:
+                    id: pension3
+                    text: '3%'
+                    group: 'pension'
+
+        Separator:
+
+        GridLayout:
+            cols: 2
+            spacing: [30,100]
+            row_force_default: True
+            row_default_height: self.height*0.5
+            padding: 30
+            StrokeButton:
+                font_size: (root.width + root.height) / 35
+                text: "Išsaugoti"
+                on_release:
+                    root.save_settings()
+
+            StrokeButton:
+                font_size: (root.width + root.height) / 35
+                text: "Atšaukti"
+                on_release: 
+                    app.root.current = "main"
+
+
+<Separator@Widget>:
+    id: separator
+    size_hint_y: None
+    height: 6
+    canvas:
+        Color:
+            rgb: 0., 0., 0.
+        Rectangle:
+            pos: 0, separator.center_y
+            size: separator.width, 2
+
+<SettingsToggleButton@ToggleButton>:
+    font_size: (root.width + root.height) / 8
+    background_color: (0,0,0,0)
+    background_normal: ''
+    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
+    back_color_press: utils.get_color_from_hex('#242725') ## Black
+    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    
+    size_hint: (0.25, 0.5)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    
+    allow_no_selection: False
+
+    ##Font color when pressed and not pressed
+    color: self.back_color_press if self.state == 'down' else self.font_color_press
+    ##Color when pressed and not pressed
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos

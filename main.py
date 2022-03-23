@@ -18,14 +18,14 @@ class MainWindow(Screen):
             }
         else: main_window_labels = {
                 "calc": "Calculator",
-                "enter_earn": "Enter your earnings",
+                "enter_earn": "Enter earnings",
                 "stats": "Statistics",
                 "sett": "Settings"
         }
 
         return main_window_labels
 
-    main_window_labels = get_lang('en')
+    main_window_labels = get_lang('lt')
 
 
 class CalcWindow(Screen):
@@ -63,3 +63,6 @@ class TaxCalc(App):
     pass
 
 TaxCalc().run()
+
+
+## python main.py -m screen:note2,portrait,scale=.75
