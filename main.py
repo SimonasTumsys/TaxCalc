@@ -35,7 +35,6 @@ class SettWindow(Screen):
         with open('settings.json', 'r') as f:
             settings = json.load(f)
 
-
         if self.ids.lng_button_lt.state == 'down':
             settings['language'] = 'lt'
         else: 
