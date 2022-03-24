@@ -1,6 +1,6 @@
 #:kivy 1.11.1
 #:import utils kivy.utils
-#:import F kivy.factory.Factory
+#:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 
 WindowManager:
@@ -10,45 +10,6 @@ WindowManager:
     EarnWindow:
     StatWindow:
     SettWindow:
-
-
-<RoundedButton@Button>:
-    background_color: (0,0,0,0)
-    back_color: utils.get_color_from_hex('#1D7046') ## Green
-    back_color_press: utils.get_color_from_hex('#209552') ## Light Green
-    canvas.before:
-        Color:
-            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
-        RoundedRectangle:
-            size: self.size
-            pos: self.pos
-            radius: [22]
-            
-<StrokeButton@Button>:
-    background_color: (0,0,0,0)
-    background_normal: ''
-    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
-    back_color_press: utils.get_color_from_hex('#242725') ## Black
-    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
-    border_radius: 25
-
-    ##Font color:
-    color: self.back_color_press if self.state == 'normal' else self.font_color_press
-    canvas.before:
-    ##Color when pressed and not pressed:
-        Color:
-            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
-        RoundedRectangle:
-            size: self.size
-            pos: self.pos
-            radius: [25]
-    ##Line around button:
-    canvas.after:
-        Color:
-            rgba: self.back_color_press or [0,0,0,0]
-        Line:  
-            rounded_rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1], self.border_radius)
-            width: 2
 
 <MainWindow>:
     ## App's background color
@@ -134,7 +95,7 @@ WindowManager:
 
         GridLayout:
             cols: 2
-            spacing: [5,100]
+            spacing: [30,100]
             row_force_default: True
             row_default_height: self.height*0.2
             StrokeButton:
@@ -205,7 +166,6 @@ WindowManager:
             spacing: 5
             padding: [0,0,30,0]
 
-            ##PSD setting label and button
             Label:
                 font_size: (root.width + root.height) / 50
                 color: utils.get_color_from_hex('#D3D3D3')
@@ -297,7 +257,6 @@ WindowManager:
                 text: app.lang_data[4]['save']
                 on_release:
                     root.save_settings()
-                    app.lang_data
                     app.root.current = 'main'
 
             StrokeButton:
@@ -305,6 +264,22 @@ WindowManager:
                 text: app.lang_data[4]['cancel']
                 on_release: 
                     app.root.current = "main"
+    
+
+    HelpButton:
+        pos_hint: {'x':0.013, 'y':0.777}
+        id: psd_help_button
+        on_release: Factory.PSDHelpPopup().open()
+
+    HelpButton:
+        pos_hint: {'x':0.013, 'y':0.57}
+        id: spending_help_button
+        on_release: Factory.SpendHelpPopup().open()
+
+    HelpButton:
+        pos_hint: {'x':0.013, 'y':0.364}
+        id: pension_help_button
+        on_release: Factory.PensionHelpPopup().open()
 
 
 <Separator@Widget>:
@@ -318,6 +293,33 @@ WindowManager:
             pos: 0, separator.center_y
             size: separator.width, 2
 
+<StyledButton@Button>:
+    background_color: (0,0,0,0)
+    background_normal: ''
+    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
+    back_color_press: utils.get_color_from_hex('#242725') ## Black
+    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    ##Font color:
+    color: self.back_color_press if self.state == 'normal' else self.font_color_press
+
+<StrokeButton@StyledButton>:
+    border_radius: 25
+    canvas.before:
+    ##Color when pressed and not pressed:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [25]
+    ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rounded_rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1], self.border_radius)
+            width: 2
+
 <SettingsToggleButton@ToggleButton>:
     font_size: (root.width + root.height) / 8
     background_color: (0,0,0,0)
@@ -325,12 +327,9 @@ WindowManager:
     back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
     back_color_press: utils.get_color_from_hex('#242725') ## Black
     font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
-    
     size_hint: (0.25, 0.5)
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-    
     allow_no_selection: False
-
     ##Font color when pressed and not pressed
     color: self.back_color_press if self.state == 'down' else self.font_color_press
     ##Color when pressed and not pressed
@@ -340,3 +339,37 @@ WindowManager:
         Rectangle:
             size: self.size
             pos: self.pos
+
+<HelpButton@StyledButton>:
+    size_hint: (0.05, 0.025)
+    font_size: (root.width + root.height) / 3
+    color: self.back_color_press if self.state == 'down' else self.font_color_press
+    text: '?'
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<HelpPopup@Popup>:
+    size_hint: (0.8, 0.5)
+    separator_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    title_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    title_align: 'center'
+
+<PSDHelpPopup@HelpPopup>:
+    title: 'Fiksuotas PSD'
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            font_size: (root.width + root.height) / 50
+            color: utils.get_color_from_hex('#D3D3D3')
+            #text: app.lang_data[4]['pension']
+
+<SpendHelpPopup@HelpPopup>:
+    title: '30'
+
+
+<PensionHelpPopup@HelpPopup>:
+    title: 'Pensija'

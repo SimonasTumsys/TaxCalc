@@ -1,8 +1,7 @@
 {
   "language": "lt",
-  "psd_fixed": true,
-  "spend_30_percent": false,
+  "psd_fixed": false,
+  "spend_30_percent": true,
   "spend_sum": 0,
-  "pension": 2.7,
-  "gpm": 0
+  "pension": 3
 }
