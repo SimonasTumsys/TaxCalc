@@ -25,7 +25,11 @@
                 "spend_30": "Išlaidos 30%",
                 "pension": "Pensija",
                 "save": "Išsaugoti",
-                "cancel": "Atšaukti"
+                "cancel": "Atšaukti",
+                "psd_help": "PSD - privalomasis sveikatos draudimas.\n\nJeigu esate studentas ar papildomai dirbate pagal darbo sutartį, fiksuoto PSD mokėti nereikia. Kitu atveju, fiksuotas PSD mokamas kiekvieną mėnesį.\n\nFiksuoto PSD įmokos dydis - 6.98% nuo MMA (minimalaus darbo užmokesčio). Nuo 2022m. PSD dydis lygus €50.95/mėn.\n\nPasirinkus 'Taip', fiksuotas PSD visuose naujuose skaičiavimuose pridedamas automatiškai.\n\nPasirinkus 'Ne' - skaičiuojamas tik santykinis PSD (6.98% nuo 90% pelno).",
+                "spend_help": "Kadangi PSD ir VSD (valstybės socialinis draudimas) mokamas nuo 90% pelno (pajamos minus išlaidos), norint apskaičiuoti pelną, svarbu žinoti darbines išlaidas.\n\nPagal VMI tvarką, nedeklaruojamų išlaidų galima turėti 30% nuo visų pajamų, o jei išlaidos didesnės - būtina jas deklaruoti pateikiant dokumentus.\n\nJei manote, kad daug išlaidų neturėsite ir/ar nekaupiate dokumentų, rekomenduojama žymėti 'Taip'. Priešingu atveju, reikės įvesti metines išlaidas ranka.",
+                "pension_help": "Prie VSD (12.52% nuo 90% pelno) prisideda ir kaupiamos pensijos koeficientas.\n\nNorėdami sužinoti savo pensijos kaupimo procentą, nueikite į savo Sodros paskyrą gyventojui.\n\nŠis procentas prisidės prie VSD procento, tad iš viso abu šie mokesčiai gali sudaryti 12.52%, kai pensijos nekaupiate, 15.22%, kai kaupiate 2.7%, ir 15.52%, kai kaupiate 3% pensijos.",
+                "take_effect": "Kad šie pakeitimai pradėtų galioti, išjunkite ir įjunkite programėlę"
             }
     ],
     "en": [

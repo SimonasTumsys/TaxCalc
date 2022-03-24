@@ -139,9 +139,7 @@ WindowManager:
             padding: [0,0,30,0]
 
             ##Language setting label and button
-            Label:
-                font_size: (root.width + root.height) / 50
-                color: utils.get_color_from_hex('#D3D3D3')
+            SettingsLabel:
                 text: app.lang_data[4]['lang']
             BoxLayout:
                 orientation: 'horizontal'
@@ -166,9 +164,7 @@ WindowManager:
             spacing: 5
             padding: [0,0,30,0]
 
-            Label:
-                font_size: (root.width + root.height) / 50
-                color: utils.get_color_from_hex('#D3D3D3')
+            SettingsLabel:
                 text: app.lang_data[4]['fixed_psd']
             BoxLayout:
                 orientation: 'horizontal'
@@ -193,9 +189,7 @@ WindowManager:
             padding: [0,0,30,0]
 
             ##Spending setting label and button
-            Label:
-                font_size: (root.width + root.height) / 50
-                color: utils.get_color_from_hex('#D3D3D3')
+            SettingsLabel:
                 text: app.lang_data[4]['spend_30']
             BoxLayout:
                 orientation: 'horizontal'
@@ -221,9 +215,7 @@ WindowManager:
             padding: [0,0,30,0]
 
             ##Pension setting label and button
-            Label:
-                font_size: (root.width + root.height) / 50
-                color: utils.get_color_from_hex('#D3D3D3')
+            SettingsLabel:
                 text: app.lang_data[4]['pension']
             BoxLayout:
                 orientation: 'horizontal'
@@ -258,6 +250,7 @@ WindowManager:
                 on_release:
                     root.save_settings()
                     app.root.current = 'main'
+                    ##app.stop()
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
@@ -353,23 +346,44 @@ WindowManager:
             pos: self.pos
 
 <HelpPopup@Popup>:
-    size_hint: (0.8, 0.5)
+    size_hint: (0.8, 0.6)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
     separator_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    separator_height: '1dp'
     title_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
     title_align: 'center'
+    title_size: (root.width + root.height) / 32
+    background_color: utils.get_color_from_hex('#242725')
 
 <PSDHelpPopup@HelpPopup>:
-    title: 'Fiksuotas PSD'
+    title: app.lang_data[4]['fixed_psd']
     BoxLayout:
         orientation: 'vertical'
-        Label:
-            font_size: (root.width + root.height) / 50
-            color: utils.get_color_from_hex('#D3D3D3')
-            #text: app.lang_data[4]['pension']
+        PopupLabel:
+            text: app.lang_data[4]['psd_help']
 
 <SpendHelpPopup@HelpPopup>:
-    title: '30'
+    title: app.lang_data[4]['spend_30']
+    BoxLayout:
+        orientation: 'vertical'
+        PopupLabel:
+            text: app.lang_data[4]['spend_help']
 
 
 <PensionHelpPopup@HelpPopup>:
-    title: 'Pensija'
+    title: app.lang_data[4]['pension']
+    BoxLayout:
+        orientation: 'vertical'
+        PopupLabel:
+            text: app.lang_data[4]['pension_help']
+
+<PopupLabel@Label>:
+    valign: 'middle'
+    halign: 'center'
+    font_size: (root.width + root.height) / 45
+    text_size: self.size
+    color: utils.get_color_from_hex('#D3D3D3')
+
+<SettingsLabel@Label>:
+    font_size: (root.width + root.height) / 13
+    color: utils.get_color_from_hex('#D3D3D3')
