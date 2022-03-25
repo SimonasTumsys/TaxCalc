@@ -1,6 +1,6 @@
 #:kivy 1.11.1
 #:import utils kivy.utils
-#:import F kivy.factory.Factory
+#:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
 
 WindowManager:
@@ -10,45 +10,6 @@ WindowManager:
     EarnWindow:
     StatWindow:
     SettWindow:
-
-
-<RoundedButton@Button>:
-    background_color: (0,0,0,0)
-    back_color: utils.get_color_from_hex('#1D7046') ## Green
-    back_color_press: utils.get_color_from_hex('#209552') ## Light Green
-    canvas.before:
-        Color:
-            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
-        RoundedRectangle:
-            size: self.size
-            pos: self.pos
-            radius: [22]
-            
-<StrokeButton@Button>:
-    background_color: (0,0,0,0)
-    background_normal: ''
-    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
-    back_color_press: utils.get_color_from_hex('#242725') ## Black
-    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
-    border_radius: 25
-    bold: True
-    ##Font color:
-    color: self.back_color_press if self.state == 'normal' else self.font_color_press
-    canvas.before:
-    ##Color when pressed and not pressed:
-        Color:
-            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
-        RoundedRectangle:
-            size: self.size
-            pos: self.pos
-            radius: [25]
-    ##Line around button:
-    canvas.after:
-        Color:
-            rgba: self.back_color_press or [0,0,0,0]
-        Line:  
-            rounded_rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1], self.border_radius)
-            width: 2
 
 <MainWindow>:
     ## App's background color
@@ -82,27 +43,27 @@ WindowManager:
 
             StrokeButton: ##Calculator button 
                 font_size: (root.width + root.height) / 30
-                text: root.main_window_labels['calc']
+                text: app.lang_data[0]['calc']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = "calc"
 
             StrokeButton: ##Enter earnings button
                 font_size: (root.width + root.height) / 30
-                text: root.main_window_labels['enter_earn']
+                text: app.lang_data[0]['enter_earn']
                 font_name: 'DejaVuSans'
             
             StrokeButton: ##Statistics button
                 font_size: (root.width + root.height) / 30
-                text: root.main_window_labels['stats']
+                text: app.lang_data[0]['stats']
                 font_name: 'DejaVuSans'
                 
             StrokeButton: ##Settings button
                 font_size: (root.width + root.height) / 30
-                text: root.main_window_labels['sett']
+                text: app.lang_data[0]['sett']
                 font_name: 'DejaVuSans'
                 on_release:
-                    app.open_settings()
+                    app.root.current = 'sett'
 
 
 <CalcWindow>:
@@ -127,25 +88,25 @@ WindowManager:
             id: brutt_earn
             multiline: False
             font_size: (root.width + root.height) / 55
-            hint_text: 'Įveskite sumą prieš mokesčius'
+            hint_text: app.lang_data[1]['input_ph']
             hint_text_color: utils.get_color_from_hex('#636469')
             input_filter: 'float'
         
 
         GridLayout:
             cols: 2
-            spacing: [5,100]
+            spacing: [30,100]
             row_force_default: True
             row_default_height: self.height*0.2
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: "Pateikti"
+                text: app.lang_data[1]['submit']
                 on_release:
                     root.calculate()
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: "Grįžti"
+                text: app.lang_data[1]['back']
                 on_release: 
                     app.root.current = "main"
 
@@ -166,17 +127,298 @@ WindowManager:
             pos: self.pos
             size: self.size
 
-    GridLayout:
-        size_hint: 1, 0.5
-        pos_hint: {'center_x': .5, 'center_y': .65}
-        cols: 1
-        spacing: [0,10]
+    ##Main layout
+    BoxLayout:
+        orientation: 'vertical'
+        spacing: 10
+        
+        ##Language setting layout
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
 
-        canvas.before:
-            Color:
-                rgba: utils.get_color_from_hex('#242725')
-            Line:
-                width: 10
-                points: [0,240,320,240]
+            ##Language setting label and button
+            SettingsLabel:
+                text: app.lang_data[4]['lang']
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: lng_button_lt
+                    text: 'Lietuvių'
+                    group: 'lng'
+                    state: 'down' if app.settings['language'] == 'lt' else 'normal'
+                    
+                SettingsToggleButton:
+                    id: lng_button_en
+                    text: 'English'
+                    group: 'lng'
+                    state: 'down' if app.settings['language'] == 'en' else 'normal'
 
-                
+        Separator:
+
+        ##PSD setting layout
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
+
+            SettingsLabel:
+                text: app.lang_data[4]['fixed_psd']
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: psd_button_true
+                    text: app.lang_data[4]['yes']
+                    group: 'psd'
+                    state: 'down' if app.settings['psd_fixed'] == True else 'normal'
+                SettingsToggleButton:
+                    id: psd_button_false
+                    text: app.lang_data[4]['no']
+                    group: 'psd'
+                    state: 'down' if app.settings['psd_fixed'] == False else 'normal'
+
+        Separator:
+
+        ##Spending setting layout
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
+
+            ##Spending setting label and button
+            SettingsLabel:
+                text: app.lang_data[4]['spend_30']
+                halign: 'center'
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: spend_button_true
+                    text: app.lang_data[4]['yes']
+                    group: 'spend'
+                    state: 'down' if app.settings['spend_30_percent'] == True else 'normal'
+                SettingsToggleButton:
+                    id: spend_button_false
+                    text: app.lang_data[4]['no']
+                    group: 'spend'
+                    state: 'down' if app.settings['spend_30_percent'] == False else 'normal'
+
+
+        Separator:
+
+        ##Pension setting layout
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
+
+            ##Pension setting label and button
+            SettingsLabel:
+                text: app.lang_data[4]['pension']
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: pension0
+                    text: '0'
+                    group: 'pension'
+                    state: 'down' if app.settings['pension'] == 0 else 'normal'
+                SettingsToggleButton:
+                    id: pension27
+                    text: '2.7%'
+                    group: 'pension'
+                    state: 'down' if app.settings['pension'] == 2.7 else 'normal'
+                SettingsToggleButton:
+                    id: pension3
+                    text: '3%'
+                    group: 'pension'
+                    state: 'down' if app.settings['pension'] == 3 else 'normal'
+                    
+        Separator:
+
+        GridLayout:
+            cols: 2
+            spacing: [30,100]
+            row_force_default: True
+            row_default_height: self.height*0.5
+            padding: 30
+            StrokeButton:
+                font_size: (root.width + root.height) / 35
+                text: app.lang_data[4]['save']
+                on_release:
+                    Factory.TakeEffectPopup().open()
+
+            StrokeButton:
+                font_size: (root.width + root.height) / 35
+                text: app.lang_data[4]['cancel']
+                on_release: 
+                    app.root.current = "main"
+    
+
+    HelpButton:
+        pos_hint: {'x':0.013, 'y':0.777}
+        id: psd_help_button
+        on_release: Factory.PSDHelpPopup().open()
+
+    HelpButton:
+        pos_hint: {'x':0.013, 'y':0.57}
+        id: spending_help_button
+        on_release: Factory.SpendHelpPopup().open()
+
+    HelpButton:
+        pos_hint: {'x':0.013, 'y':0.364}
+        id: pension_help_button
+        on_release: Factory.PensionHelpPopup().open()
+
+
+<Separator@Widget>:
+    id: separator
+    size_hint_y: None
+    height: 6
+    canvas:
+        Color:
+            rgb: 0., 0., 0.
+        Rectangle:
+            pos: 0, separator.center_y
+            size: separator.width, 2
+
+<StyledButton@Button>:
+    background_color: (0,0,0,0)
+    background_normal: ''
+    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
+    back_color_press: utils.get_color_from_hex('#242725') ## Black
+    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    ##Font color:
+    color: self.back_color_press if self.state == 'normal' else self.font_color_press
+
+<StrokeButton@StyledButton>:
+    border_radius: 25
+    canvas.before:
+    ##Color when pressed and not pressed:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [25]
+    ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rounded_rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1], self.border_radius)
+            width: 2
+
+<SettingsToggleButton@ToggleButton>:
+    font_size: (root.width + root.height) / 8
+    background_color: (0,0,0,0)
+    background_normal: ''
+    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
+    back_color_press: utils.get_color_from_hex('#242725') ## Black
+    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    size_hint: (0.25, 0.5)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+    allow_no_selection: False
+    ##Font color when pressed and not pressed
+    color: self.back_color_press if self.state == 'down' else self.font_color_press
+    ##Color when pressed and not pressed
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<HelpButton@StyledButton>:
+    size_hint: (0.05, 0.025)
+    font_size: (root.width + root.height) / 3
+    color: self.back_color_press if self.state == 'down' else self.font_color_press
+    text: '?'
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+
+<HelpPopup@Popup>:
+    size_hint: (0.8, 0.6)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+    separator_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    separator_height: '1dp'
+    title_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    title_align: 'center'
+    title_size: (root.width + root.height) / 32
+    #background_color: utils.get_color_from_hex('#242725')
+
+<PSDHelpPopup@HelpPopup>:
+    title: app.lang_data[4]['fixed_psd']
+    BoxLayout:
+        orientation: 'vertical'
+        PopupLabel:
+            text: app.lang_data[4]['psd_help']
+
+<SpendHelpPopup@HelpPopup>:
+    title: app.lang_data[4]['spend_30']
+    BoxLayout:
+        orientation: 'vertical'
+        PopupLabel:
+            text: app.lang_data[4]['spend_help']
+
+
+<PensionHelpPopup@HelpPopup>:
+    title: app.lang_data[4]['pension']
+    BoxLayout:
+        orientation: 'vertical'
+        PopupLabel:
+            text: app.lang_data[4]['pension_help']
+
+<TakeEffectPopup@Popup>:
+    size_hint: (0.8, 0.25)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+    title: ''
+    separator_height: 0
+    #background_color: utils.get_color_from_hex('#242725')
+    auto_dismiss: False
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: app.lang_data[4]['take_effect']
+            font_size: (root.width + root.height) / 35
+            color: utils.get_color_from_hex('#D3D3D3')
+            valign: 'middle'
+            halign: 'center'
+            text_size: self.size
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 30
+            StrokeButton: ##Save and quit button
+                font_size: (root.width + root.height) / 35
+                text: app.lang_data[4]['save_quit']
+                font_name: 'DejaVuSans'
+                size_hint: (1, 0.6)
+                on_release:
+                    app.root.get_screen('sett').save_settings()
+                    app.stop()
+            StrokeButton: ##Cancel button
+                font_size: (root.width + root.height) / 35
+                text: app.lang_data[4]['cancel']
+                font_name: 'DejaVuSans'
+                size_hint: (1, 0.6)
+                on_release:
+                    root.dismiss()
+
+
+<PopupLabel@Label>:
+    valign: 'middle'
+    halign: 'center'
+    font_size: (root.width + root.height) / 45
+    text_size: self.size
+    color: utils.get_color_from_hex('#D3D3D3')
+
+<SettingsLabel@Label>:
+    font_size: (root.width + root.height) / 13
+    color: utils.get_color_from_hex('#D3D3D3')
