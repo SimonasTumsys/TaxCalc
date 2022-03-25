@@ -29,7 +29,9 @@
                 "psd_help": "PSD - privalomasis sveikatos draudimas.\n\nJeigu esate studentas ar papildomai dirbate pagal darbo sutartį, fiksuoto PSD mokėti nereikia. Kitu atveju, fiksuotas PSD mokamas kiekvieną mėnesį.\n\nFiksuoto PSD įmokos dydis - 6.98% nuo MMA (minimalaus darbo užmokesčio). Nuo 2022m. PSD dydis lygus €50.95/mėn.\n\nPasirinkus 'Taip', fiksuotas PSD visuose naujuose skaičiavimuose pridedamas automatiškai.\n\nPasirinkus 'Ne' - skaičiuojamas tik santykinis PSD (6.98% nuo 90% pelno).",
                 "spend_help": "Kadangi PSD ir VSD (valstybės socialinis draudimas) mokamas nuo 90% pelno (pajamos minus išlaidos), norint apskaičiuoti pelną, svarbu žinoti darbines išlaidas.\n\nPagal VMI tvarką, nedeklaruojamų išlaidų galima turėti 30% nuo visų pajamų, o jei išlaidos didesnės - būtina jas deklaruoti pateikiant dokumentus.\n\nJei manote, kad daug išlaidų neturėsite ir/ar nekaupiate dokumentų, rekomenduojama žymėti 'Taip'. Priešingu atveju, reikės įvesti metines išlaidas ranka.",
                 "pension_help": "Prie VSD (12.52% nuo 90% pelno) prisideda ir kaupiamos pensijos koeficientas.\n\nNorėdami sužinoti savo pensijos kaupimo procentą, nueikite į savo Sodros paskyrą gyventojui.\n\nŠis procentas prisidės prie VSD procento, tad iš viso abu šie mokesčiai gali sudaryti 12.52%, kai pensijos nekaupiate, 15.22%, kai kaupiate 2.7%, ir 15.52%, kai kaupiate 3% pensijos.",
-                "take_effect": "Kad šie pakeitimai pradėtų galioti, išjunkite ir įjunkite programėlę"
+                "save_changes": "Išsaugoti pakeitimus",
+                "save_quit": "Išsaugoti ir išjungti",
+                "take_effect": "Kad šie pakeitimai pradėtų galioti,\npaleiskite programėlę iš naujo"
             }
     ],
     "en": [
@@ -52,13 +54,19 @@
             },
             {
                 "lang": "Language",
-                "fixed_psd": "Fixed PSD",
+                "fixed_psd": "Fixed CHI",
                 "yes": "Yes",
                 "no": "No",
-                "spend_30": "30% as spent",
+                "spend_30": "30%\nexpenditure",
                 "pension": "Pension rate",
                 "save": "Save",
-                "cancel": "Cancel"
+                "cancel": "Cancel",
+                "psd_help": "CHI - compulsory health insurance.\n\nIf you are a student or work under an employment contract, you don't need to pay the fixed CHI. Otherwise, fixed CHI needs to be paid monthly.\n\nThe fixed CHI amounts to 6.98% of minimal wage. Starting 2022, this is equal to €50.95/month.\n\nIf 'Yes' is chosen, fixed CHI amount will be automatically added to all new calculations.\n\nIf 'No' is chosen, only the relative CHI (6.98% of 90% profit) will be calculated.",
+                "spend_help": "Since CHI and SSI (state social insurance) is calculated using profit (total income minus total expenditure), it is important to know the amount of work-related expenditure.\n\nAccording to the STI (state tax inspection), the allowed amount of undeclared work-related costs is 30% of total income. If the costs are higher, it is necessary to declare them by providing required documents.\n\nIf you believe that your total costs won't exceed the allowed amount, choose 'Yes'. Otherwise, you will have to input the costs by hand when prompted.",
+                "pension_help": "Added to the SSI (12.52% of 90% profit) is the pension coefficient, used to calculate the amount of pension funds to be accumulated.\n\nIf you want to know more about this coefficient, refer to http://sodra.lt for more information.\n\nThis coefficient will be added to the SSI percentage, so in total both of these taxes can be 12.52% if you do not accumulate pension funds, 15.22% if you allocate 2.7% to pension funds, and 15.52% if you allocate 3%.",
+                "save_changes": "Save changes",
+                "save_quit": "Save and quit",
+                "take_effect": "Restart the app for these changes to take effect"
             }
     ]
 }

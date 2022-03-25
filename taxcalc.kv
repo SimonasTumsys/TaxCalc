@@ -191,6 +191,7 @@ WindowManager:
             ##Spending setting label and button
             SettingsLabel:
                 text: app.lang_data[4]['spend_30']
+                halign: 'center'
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
@@ -248,9 +249,7 @@ WindowManager:
                 font_size: (root.width + root.height) / 35
                 text: app.lang_data[4]['save']
                 on_release:
-                    root.save_settings()
-                    app.root.current = 'main'
-                    ##app.stop()
+                    Factory.TakeEffectPopup().open()
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
@@ -353,7 +352,7 @@ WindowManager:
     title_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
     title_align: 'center'
     title_size: (root.width + root.height) / 32
-    background_color: utils.get_color_from_hex('#242725')
+    #background_color: utils.get_color_from_hex('#242725')
 
 <PSDHelpPopup@HelpPopup>:
     title: app.lang_data[4]['fixed_psd']
@@ -376,6 +375,42 @@ WindowManager:
         orientation: 'vertical'
         PopupLabel:
             text: app.lang_data[4]['pension_help']
+
+<TakeEffectPopup@Popup>:
+    size_hint: (0.8, 0.25)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+    title: ''
+    separator_height: 0
+    #background_color: utils.get_color_from_hex('#242725')
+    auto_dismiss: False
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: app.lang_data[4]['take_effect']
+            font_size: (root.width + root.height) / 35
+            color: utils.get_color_from_hex('#D3D3D3')
+            valign: 'middle'
+            halign: 'center'
+            text_size: self.size
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 30
+            StrokeButton: ##Save and quit button
+                font_size: (root.width + root.height) / 35
+                text: app.lang_data[4]['save_quit']
+                font_name: 'DejaVuSans'
+                size_hint: (1, 0.6)
+                on_release:
+                    app.root.get_screen('sett').save_settings()
+                    app.stop()
+            StrokeButton: ##Cancel button
+                font_size: (root.width + root.height) / 35
+                text: app.lang_data[4]['cancel']
+                font_name: 'DejaVuSans'
+                size_hint: (1, 0.6)
+                on_release:
+                    root.dismiss()
+
 
 <PopupLabel@Label>:
     valign: 'middle'
