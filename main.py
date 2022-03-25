@@ -14,7 +14,7 @@ class CalcWindow(Screen):
     def calculate(self):
         psd_rate = 0.0698
         vsd_rate = 0.1252
-        pension_rate = 0.045
+        pension_rate = 0.03
         if self.ids.brutt_earn.text is not '':
             profit = float(self.ids.brutt_earn.text) - float(self.ids.brutt_earn.text)*0.3
             psd_tax = (profit*0.9)*psd_rate
