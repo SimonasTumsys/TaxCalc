@@ -4,6 +4,9 @@ from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
 import json
+import kivymd
+
+
 
 class MainWindow(Screen):
     pass
@@ -71,15 +74,25 @@ class TaxCalc(App):
             settings = json.load(f)
         return settings
     
+    def get_col():
+        with open('colors.json') as f:
+            colors = json.load(f)
+            return colors
+    
     def get_lang(lang = get_sett()['language']):
         with open('language.json', encoding='utf-8') as f:
             lang_data = json.load(f)
             lang_data = lang_data[lang]
         return lang_data
+    
+    def build(self):
+        self.icon = 'temp_icon.jpg'
 
 
     lang_data = get_lang()
     settings = get_sett()
+    colors = get_col()
+
 
 TaxCalc().run()
 

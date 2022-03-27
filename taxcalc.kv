@@ -1,4 +1,4 @@
-#:kivy 1.11.1
+#:kivy 2.1.0
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
@@ -15,7 +15,8 @@ WindowManager:
     ## App's background color
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#49534C') ## Background grey
+            rgba: utils.get_color_from_hex(app.colors['bg_main']) ## Background grey
+
         Rectangle:
             pos: self.pos
             size: self.size
@@ -71,7 +72,7 @@ WindowManager:
 
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#49534C')
+            rgba: utils.get_color_from_hex(app.colors['bg_main'])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -89,7 +90,7 @@ WindowManager:
             multiline: False
             font_size: (root.width + root.height) / 55
             hint_text: app.lang_data[1]['input_ph']
-            hint_text_color: utils.get_color_from_hex('#636469')
+            hint_text_color: app.colors['hint_text']
             input_filter: 'float'
         
 
@@ -122,7 +123,7 @@ WindowManager:
 
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#49534C')
+            rgba: utils.get_color_from_hex(app.colors['bg_main'])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -288,9 +289,9 @@ WindowManager:
 <StyledButton@Button>:
     background_color: (0,0,0,0)
     background_normal: ''
-    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
-    back_color_press: utils.get_color_from_hex('#242725') ## Black
-    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## Grey
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Black
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     ##Font color:
     color: self.back_color_press if self.state == 'normal' else self.font_color_press
 
@@ -316,9 +317,9 @@ WindowManager:
     font_size: (root.width + root.height) / 8
     background_color: (0,0,0,0)
     background_normal: ''
-    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
-    back_color_press: utils.get_color_from_hex('#242725') ## Black
-    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## Grey
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Black
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     size_hint: (0.25, 0.5)
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     allow_no_selection: False
@@ -347,9 +348,9 @@ WindowManager:
 <HelpPopup@Popup>:
     size_hint: (0.8, 0.6)
     pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-    separator_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    separator_color: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     separator_height: '1dp'
-    title_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    title_color: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     title_align: 'center'
     title_size: (root.width + root.height) / 32
     #background_color: utils.get_color_from_hex('#242725')
@@ -388,7 +389,7 @@ WindowManager:
         Label:
             text: app.lang_data[4]['take_effect']
             font_size: (root.width + root.height) / 35
-            color: utils.get_color_from_hex('#D3D3D3')
+            color: utils.get_color_from_hex(app.colors['font'])
             valign: 'middle'
             halign: 'center'
             text_size: self.size
@@ -417,8 +418,8 @@ WindowManager:
     halign: 'center'
     font_size: (root.width + root.height) / 45
     text_size: self.size
-    color: utils.get_color_from_hex('#D3D3D3')
+    color: utils.get_color_from_hex(app.colors['font'])
 
 <SettingsLabel@Label>:
     font_size: (root.width + root.height) / 13
-    color: utils.get_color_from_hex('#D3D3D3')
+    color: utils.get_color_from_hex(app.colors['btn_side'])
