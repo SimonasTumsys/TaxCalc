@@ -1,8 +1,10 @@
+from logging import root
 from kivy.app import App
 from kivymd.uix.screen import Screen
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
+from kivy.animation import Animation
 import json
 import kivymd
 
@@ -12,19 +14,51 @@ class MainWindow(Screen):
     pass
 
 class CalcWindow(Screen):
-    brutt_earn = ObjectProperty(None)
+    total_earn = ObjectProperty(None)
+    costs = ObjectProperty(None)
 
-    def calculate(self):
-        psd_rate = 0.0698
+    with open('settings.json', 'r') as f:
+        settings = json.load(f)
+
+    def calculate(self, settings = settings):
+        psd_relative_rate = 0.0698
         vsd_rate = 0.1252
-        pension_rate = 0.03
-        if self.ids.brutt_earn.text is not '':
-            profit = float(self.ids.brutt_earn.text) - float(self.ids.brutt_earn.text)*0.3
-            psd_tax = (profit*0.9)*psd_rate
+        pension_rate = float(settings['pension'])
+
+        if self.ids.total_earn.text is not '':
+            total_earn = float(self.ids.total_earn.text)
+            if settings['spend_30_percent'] == True:
+                total_costs = total_earn*0.3
+            else:
+                if self.ids.costs.text is not '':
+                    total_costs = float(self.ids.costs.text)                
+
+            profit = total_earn - total_costs
+
+            if settings['psd_fixed'] == True:
+                psd_tax = 50.95
+            else:  
+                psd_tax = (profit*0.9)*psd_relative_rate
+
             vsd_tax = (profit*0.9)*vsd_rate
-            pension_tax = (profit*0.9)*pension_rate
-            total_tax = psd_tax + vsd_tax + pension_tax
-            nett_earn = float(self.ids.brutt_earn.text) - total_tax
+            pension_tax = (profit*0.9)*(pension_rate/100)
+            if profit <= 20000:
+                gpm_tax = profit * 0.05
+            elif profit > 20000 and profit < 35000:
+                gpm_tax = profit * 0.15 - profit * (0.1-2/300000 *
+                (profit - 20000))
+            else:
+                gpm_tax = profit*0.15
+
+            total_tax = psd_tax + vsd_tax + pension_tax + gpm_tax
+            nett_earn = total_earn - total_tax
+            total_tax_perc = round(total_tax/nett_earn*100, 2)
+
+            return {"total_earn":total_earn,"total_costs":total_costs,
+                "profit":profit,"vsd_tax":vsd_tax,"psd_tax":psd_tax,
+                "pension_tax":pension_tax, "gpm_tax":gpm_tax,
+                "total_tax":total_tax,"nett_earn":nett_earn,
+                "total_tax_perc": total_tax_perc}
 
 
 class EarnWindow(Screen):
@@ -66,7 +100,6 @@ class SettWindow(Screen):
 
 class WindowManager(ScreenManager):
     pass
-
 
 class TaxCalc(App):
     def get_sett():

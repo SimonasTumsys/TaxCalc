@@ -86,14 +86,26 @@ WindowManager:
         TextInput:
             pos_hint: {'center_x': .5, 'center_y': .85}
             size_hint: 0.4, 0.2
-            id: brutt_earn
+            id: total_earn
             multiline: False
             font_size: (root.width + root.height) / 55
             hint_text: app.lang_data[1]['input_ph']
             hint_text_color: app.colors['hint_text']
             input_filter: 'float'
-        
 
+        TextInput:
+            id: costs
+            size_hint_y: 0.2
+            height: 0
+            background_color: 1,1,1,1
+            multiline: False
+            font_size: (root.width + root.height) / 55
+            hint_text: app.lang_data[1]['cost_ph'] if app.settings['spend_30_percent'] == False else app.lang_data[1]['auto_cost']
+            hint_text_color: app.colors['hint_text']
+            input_filter: 'float'
+            disabled: True if app.settings['spend_30_percent'] == True else False
+
+        
         GridLayout:
             cols: 2
             spacing: [30,100]
@@ -104,14 +116,16 @@ WindowManager:
                 text: app.lang_data[1]['submit']
                 on_release:
                     root.calculate()
+                    root.ids.total_earn.text = ''
+                    root.ids.costs.text = ''
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
                 text: app.lang_data[1]['back']
-                on_release: 
+                on_release:
+                    root.ids.total_earn.text = ''
                     app.root.current = "main"
-
-
+                    
 <EarnWindow>:
     name: "earn"
 
@@ -324,14 +338,15 @@ WindowManager:
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     allow_no_selection: False
     ##Font color when pressed and not pressed
-    color: self.back_color_press if self.state == 'down' else self.font_color_press
+    color: self.back_color_press if self.state == 'normal' else self.font_color_press
     ##Color when pressed and not pressed
     canvas.before:
         Color:
-            rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
-        Rectangle:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        RoundedRectangle:
             size: self.size
             pos: self.pos
+            radius: [15]
 
 <HelpButton@StyledButton>:
     size_hint: (0.05, 0.025)
@@ -341,9 +356,10 @@ WindowManager:
     canvas.before:
         Color:
             rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
-        Rectangle:
+        RoundedRectangle:
             size: self.size
             pos: self.pos
+            radius: [5]
 
 <HelpPopup@Popup>:
     size_hint: (0.8, 0.6)
@@ -423,3 +439,4 @@ WindowManager:
 <SettingsLabel@Label>:
     font_size: (root.width + root.height) / 13
     color: utils.get_color_from_hex(app.colors['btn_side'])
+    halign: 'center'
