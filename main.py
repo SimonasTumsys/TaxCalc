@@ -4,19 +4,25 @@ from kivymd.uix.screen import Screen
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
-from kivy.animation import Animation
+from kivy.uix.gridlayout import GridLayout
 import json
 import kivymd
 
+
+
+class CalculatedLayout(GridLayout):
+    pass
 
 
 class MainWindow(Screen):
     pass
 
 class CalcWindow(Screen):
-    total_earn = ObjectProperty(None)
-    costs = ObjectProperty(None)
 
+    def add_customWidget(self):
+        customWidget = CalculatedLayout()
+        self.ids.calc_container.add_widget(customWidget)
+        
     with open('settings.json', 'r') as f:
         settings = json.load(f)
 

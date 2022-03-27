@@ -118,6 +118,7 @@ WindowManager:
                     root.calculate()
                     root.ids.total_earn.text = ''
                     root.ids.costs.text = ''
+                    root.add_customWidget()
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
@@ -126,6 +127,15 @@ WindowManager:
                     root.ids.total_earn.text = ''
                     app.root.current = "main"
                     
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: 0.8, 0.5
+        pos_hint: {'center_x': .5, 'center_y': .3}
+        id: calc_container
+
+
+               
 <EarnWindow>:
     name: "earn"
 
@@ -440,3 +450,32 @@ WindowManager:
     font_size: (root.width + root.height) / 13
     color: utils.get_color_from_hex(app.colors['btn_side'])
     halign: 'center'
+
+<DataButton@StyledButton>:
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+
+<CalculatedLayout>:
+    pos: self.pos
+    rows: 5
+    cols: 2
+    DataButton:
+    DataButton:
+    DataButton:
+    DataButton:
+    DataButton:
+    DataButton:
+    DataButton:
+    DataButton:
+    DataButton:
+    DataButton:
