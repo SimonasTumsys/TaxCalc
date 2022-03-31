@@ -86,7 +86,7 @@ WindowManager:
         TextInput:
             pos_hint: {'center_x': .5, 'center_y': .85}
             size_hint: 0.4, 0.2
-            id: total_earn
+            id: total_earnings
             multiline: False
             font_size: (root.width + root.height) / 55
             hint_text: app.lang_data[1]['input_ph']
@@ -115,23 +115,25 @@ WindowManager:
                 font_size: (root.width + root.height) / 35
                 text: app.lang_data[1]['submit']
                 on_release:
-                    # root.calculate()
-                    root.ids.total_earn.text = ''
+                    root.ids.calc_container.clear_widgets()
+                    root.add_calcLayoutWidget() if root.ids.total_earnings.text != '' else root.useless()
+                    root.ids.total_earnings.text = ''
                     root.ids.costs.text = ''
-                    root.add_calcLayoutWidget()
+
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
                 text: app.lang_data[1]['back']
                 on_release:
-                    root.ids.total_earn.text = ''
+                    root.ids.total_earnings.text = ''
+                    root.ids.calc_container.clear_widgets()
                     app.root.current = "main"
                     
 
     BoxLayout:
         orientation: 'vertical'
         size_hint: 0.8, 0.5
-        pos_hint: {'center_x': .5, 'center_y': .3}
+        pos_hint: {'center_x': .5, 'center_y': .35}
         id: calc_container
 
 
@@ -472,32 +474,50 @@ WindowManager:
     DataButton:
         text: app.lang_data[1]['income']
     DataButton:
-        # text:
-        #     root.calc_dict['total_earn']
+        text:
+            app.root.get_screen('calc').calculate()[0]
     DataButton:
         text: app.lang_data[1]['profit']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[1]
     DataButton:
         text: app.lang_data[1]['costs']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[2]
     DataButton:
         text: app.lang_data[1]['psd']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[3]
     DataButton:
         text: app.lang_data[1]['vsd']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[4]
     DataButton:
         text: app.lang_data[1]['pension']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[5]
     DataButton:
         text: app.lang_data[1]['gpm']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[6]
     DataButton:
         text: app.lang_data[1]['net_earn']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[7]
     DataButton:
         text: app.lang_data[1]['total_tax']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[8]
     DataButton:
         text: app.lang_data[1]['tax_perc']
     DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[9]

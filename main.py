@@ -2,7 +2,7 @@ from logging import root
 from kivy.app import App
 from kivymd.uix.screen import Screen
 from kivy.properties import ObjectProperty
-from kivy.properties import DictProperty
+from kivy.properties import ListProperty
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
@@ -12,11 +12,7 @@ import kivymd
 
 
 class CalculatedLayout(GridLayout):
-    calc_dict = DictProperty()
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.calc_dict = CalcWindow().calculate()
-        print(self.calc_dict)
+    pass
     
 
 
@@ -36,8 +32,8 @@ class CalcWindow(Screen):
         vsd_rate = 0.1252
         pension_rate = float(settings['pension'])
 
-        if self.ids.total_earn.text is not '':
-            total_earn = float(self.ids.total_earn.text)
+        if self.ids.total_earnings.text is not '':
+            total_earn = float(self.ids.total_earnings.text)
             if settings['spend_30_percent'] == True:
                 total_costs = total_earn*0.3
             else:
@@ -63,14 +59,22 @@ class CalcWindow(Screen):
 
             total_tax = psd_tax + vsd_tax + pension_tax + gpm_tax
             nett_earn = total_earn - total_tax
-            total_tax_perc = round(total_tax/nett_earn*100, 2)
+            total_tax_perc = round(total_tax/total_earn*100, 2)
 
-            print({"total_earn":total_earn,"total_costs":total_costs,
-                "profit":profit,"vsd_tax":vsd_tax,"psd_tax":psd_tax,
-                "pension_tax":pension_tax, "gpm_tax":gpm_tax,
-                "total_tax":total_tax,"nett_earn":nett_earn,
-                "total_tax_perc": total_tax_perc})
+            output = [total_earn, profit, total_costs, 
+            psd_tax, vsd_tax, pension_tax, gpm_tax, 
+            nett_earn, total_tax, total_tax_perc]
+
+            str_output = ['€{:.2f}'.format(x) for x in output]
+        return str_output
     
+    def useless(self):
+        pass
+
+
+        
+    
+
             
 
 
