@@ -115,10 +115,10 @@ WindowManager:
                 font_size: (root.width + root.height) / 35
                 text: app.lang_data[1]['submit']
                 on_release:
-                    root.calculate()
+                    # root.calculate()
                     root.ids.total_earn.text = ''
                     root.ids.costs.text = ''
-                    root.add_customWidget()
+                    root.add_calcLayoutWidget()
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
@@ -467,15 +467,37 @@ WindowManager:
 
 <CalculatedLayout>:
     pos: self.pos
-    rows: 5
+    rows: 10
     cols: 2
     DataButton:
+        text: app.lang_data[1]['income']
+    DataButton:
+        # text:
+        #     root.calc_dict['total_earn']
+    DataButton:
+        text: app.lang_data[1]['profit']
     DataButton:
     DataButton:
+        text: app.lang_data[1]['costs']
     DataButton:
     DataButton:
+        text: app.lang_data[1]['psd']
     DataButton:
     DataButton:
+        text: app.lang_data[1]['vsd']
     DataButton:
     DataButton:
+        text: app.lang_data[1]['pension']
+    DataButton:
+    DataButton:
+        text: app.lang_data[1]['gpm']
+    DataButton:
+    DataButton:
+        text: app.lang_data[1]['net_earn']
+    DataButton:
+    DataButton:
+        text: app.lang_data[1]['total_tax']
+    DataButton:
+    DataButton:
+        text: app.lang_data[1]['tax_perc']
     DataButton:

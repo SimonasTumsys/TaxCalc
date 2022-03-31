@@ -11,7 +11,18 @@
                 "cost_ph": "Įveskite darbines išlaidas",
                 "auto_cost": "Išlaidoms - 30%",
                 "submit": "Pateikti",
-                "back": "Grįžti"
+                "back": "Grįžti",
+                "income": "Pajamos",
+                "profit": "Pelnas",
+                "costs": "Išlaidos",                
+                "psd": "PSD",
+                "vsd": "VSD",
+                "pension": "Pensija",
+                "gpm": "GPM",
+                "net_earn": "Uždarbis po mokesčių",
+                "total_tax": "Iš viso mokesčių",
+                "tax_perc": "Iš viso mokesčių, %"
+
             },
             {
 
@@ -48,7 +59,18 @@
                 "cost_ph": "Enter your work related costs",
                 "auto_cost": "Expenditure - 30%",
                 "submit": "Submit",
-                "back": "Back"
+                "back": "Back",
+                "income": "Total income",
+                "profit": "Profit",
+                "costs": "Costs",                
+                "psd": "CHI",
+                "vsd": "SSI",
+                "pension": "Pension",
+                "gpm": "Income tax",
+                "net_earn": "Earnings after tax",
+                "total_tax": "Total tax",
+                "tax_perc": "Total tax, %"
+
             },
             {
 

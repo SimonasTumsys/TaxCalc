@@ -2,6 +2,7 @@ from logging import root
 from kivy.app import App
 from kivymd.uix.screen import Screen
 from kivy.properties import ObjectProperty
+from kivy.properties import DictProperty
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
@@ -11,17 +12,21 @@ import kivymd
 
 
 class CalculatedLayout(GridLayout):
-    pass
+    calc_dict = DictProperty()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.calc_dict = CalcWindow().calculate()
+        print(self.calc_dict)
+    
 
 
 class MainWindow(Screen):
     pass
 
 class CalcWindow(Screen):
-
-    def add_customWidget(self):
-        customWidget = CalculatedLayout()
-        self.ids.calc_container.add_widget(customWidget)
+    def add_calcLayoutWidget(self):
+        calcLayout = CalculatedLayout()
+        self.ids.calc_container.add_widget(calcLayout)
         
     with open('settings.json', 'r') as f:
         settings = json.load(f)
@@ -60,11 +65,13 @@ class CalcWindow(Screen):
             nett_earn = total_earn - total_tax
             total_tax_perc = round(total_tax/nett_earn*100, 2)
 
-            return {"total_earn":total_earn,"total_costs":total_costs,
+            print({"total_earn":total_earn,"total_costs":total_costs,
                 "profit":profit,"vsd_tax":vsd_tax,"psd_tax":psd_tax,
                 "pension_tax":pension_tax, "gpm_tax":gpm_tax,
                 "total_tax":total_tax,"nett_earn":nett_earn,
-                "total_tax_perc": total_tax_perc}
+                "total_tax_perc": total_tax_perc})
+    
+            
 
 
 class EarnWindow(Screen):
