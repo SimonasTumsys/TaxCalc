@@ -115,7 +115,7 @@ WindowManager:
                 font_size: (root.width + root.height) / 35
                 text: app.lang_data[1]['submit']
                 on_release:
-                    root.ids.calc_container.clear_widgets()
+                    root.ids.calc_container.clear_widgets() 
                     root.add_calcLayoutWidget() if root.ids.total_earnings.text != '' else root.useless()
                     root.ids.total_earnings.text = ''
                     root.ids.costs.text = ''
