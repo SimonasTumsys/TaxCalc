@@ -1,4 +1,4 @@
-#:kivy 1.11.1
+#:kivy 2.1.0
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
@@ -15,7 +15,8 @@ WindowManager:
     ## App's background color
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#49534C') ## Background grey
+            rgba: utils.get_color_from_hex(app.colors['bg_main']) ## Background grey
+
         Rectangle:
             pos: self.pos
             size: self.size
@@ -71,7 +72,7 @@ WindowManager:
 
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#49534C')
+            rgba: utils.get_color_from_hex(app.colors['bg_main'])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -85,14 +86,26 @@ WindowManager:
         TextInput:
             pos_hint: {'center_x': .5, 'center_y': .85}
             size_hint: 0.4, 0.2
-            id: brutt_earn
+            id: total_earnings
             multiline: False
             font_size: (root.width + root.height) / 55
             hint_text: app.lang_data[1]['input_ph']
-            hint_text_color: utils.get_color_from_hex('#636469')
+            hint_text_color: app.colors['hint_text']
             input_filter: 'float'
-        
 
+        TextInput:
+            id: costs
+            size_hint_y: 0.2
+            height: 0
+            background_color: 1,1,1,1
+            multiline: False
+            font_size: (root.width + root.height) / 55
+            hint_text: app.lang_data[1]['cost_ph'] if app.settings['spend_30_percent'] == False else app.lang_data[1]['auto_cost']
+            hint_text_color: app.colors['hint_text']
+            input_filter: 'float'
+            disabled: True if app.settings['spend_30_percent'] == True else False
+
+        
         GridLayout:
             cols: 2
             spacing: [30,100]
@@ -102,15 +115,29 @@ WindowManager:
                 font_size: (root.width + root.height) / 35
                 text: app.lang_data[1]['submit']
                 on_release:
-                    root.calculate()
+                    root.ids.calc_container.clear_widgets() 
+                    root.add_calcLayoutWidget() if root.ids.total_earnings.text != '' else root.useless()
+                    root.ids.total_earnings.text = ''
+                    root.ids.costs.text = ''
+
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
                 text: app.lang_data[1]['back']
-                on_release: 
+                on_release:
+                    root.ids.total_earnings.text = ''
+                    root.ids.calc_container.clear_widgets()
                     app.root.current = "main"
+                    
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: 0.8, 0.5
+        pos_hint: {'center_x': .5, 'center_y': .35}
+        id: calc_container
 
 
+               
 <EarnWindow>:
     name: "earn"
 
@@ -122,7 +149,7 @@ WindowManager:
 
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex('#49534C')
+            rgba: utils.get_color_from_hex(app.colors['bg_main'])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -288,9 +315,9 @@ WindowManager:
 <StyledButton@Button>:
     background_color: (0,0,0,0)
     background_normal: ''
-    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
-    back_color_press: utils.get_color_from_hex('#242725') ## Black
-    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## Grey
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Black
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     ##Font color:
     color: self.back_color_press if self.state == 'normal' else self.font_color_press
 
@@ -316,21 +343,22 @@ WindowManager:
     font_size: (root.width + root.height) / 8
     background_color: (0,0,0,0)
     background_normal: ''
-    back_color: utils.get_color_from_hex('#E8E8E8') ## Grey
-    back_color_press: utils.get_color_from_hex('#242725') ## Black
-    font_color_press: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## Grey
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Black
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     size_hint: (0.25, 0.5)
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     allow_no_selection: False
     ##Font color when pressed and not pressed
-    color: self.back_color_press if self.state == 'down' else self.font_color_press
+    color: self.back_color_press if self.state == 'normal' else self.font_color_press
     ##Color when pressed and not pressed
     canvas.before:
         Color:
-            rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
-        Rectangle:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        RoundedRectangle:
             size: self.size
             pos: self.pos
+            radius: [15]
 
 <HelpButton@StyledButton>:
     size_hint: (0.05, 0.025)
@@ -340,16 +368,17 @@ WindowManager:
     canvas.before:
         Color:
             rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
-        Rectangle:
+        RoundedRectangle:
             size: self.size
             pos: self.pos
+            radius: [5]
 
 <HelpPopup@Popup>:
     size_hint: (0.8, 0.6)
     pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-    separator_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    separator_color: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     separator_height: '1dp'
-    title_color: utils.get_color_from_hex('#D3D3D3') ## Font Grey
+    title_color: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     title_align: 'center'
     title_size: (root.width + root.height) / 32
     #background_color: utils.get_color_from_hex('#242725')
@@ -388,7 +417,7 @@ WindowManager:
         Label:
             text: app.lang_data[4]['take_effect']
             font_size: (root.width + root.height) / 35
-            color: utils.get_color_from_hex('#D3D3D3')
+            color: utils.get_color_from_hex(app.colors['font'])
             valign: 'middle'
             halign: 'center'
             text_size: self.size
@@ -417,8 +446,78 @@ WindowManager:
     halign: 'center'
     font_size: (root.width + root.height) / 45
     text_size: self.size
-    color: utils.get_color_from_hex('#D3D3D3')
+    color: utils.get_color_from_hex(app.colors['font'])
 
 <SettingsLabel@Label>:
     font_size: (root.width + root.height) / 13
-    color: utils.get_color_from_hex('#D3D3D3')
+    color: utils.get_color_from_hex(app.colors['btn_side'])
+    halign: 'center'
+
+<DataButton@StyledButton>:
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+
+<CalculatedLayout>:
+    pos: self.pos
+    rows: 10
+    cols: 2
+    DataButton:
+        text: app.lang_data[1]['income']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[0]
+    DataButton:
+        text: app.lang_data[1]['profit']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[1]
+    DataButton:
+        text: app.lang_data[1]['costs']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[2]
+    DataButton:
+        text: app.lang_data[1]['psd']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[3]
+    DataButton:
+        text: app.lang_data[1]['vsd']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[4]
+    DataButton:
+        text: app.lang_data[1]['pension']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[5]
+    DataButton:
+        text: app.lang_data[1]['gpm']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[6]
+    DataButton:
+        text: app.lang_data[1]['net_earn']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[7]
+    DataButton:
+        text: app.lang_data[1]['total_tax']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[8]
+    DataButton:
+        text: app.lang_data[1]['tax_perc']
+    DataButton:
+        text:
+            app.root.get_screen('calc').calculate()[9]

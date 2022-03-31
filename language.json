@@ -8,8 +8,21 @@
             },
             {
                 "input_ph": "Įveskite sumą prieš mokesčius",
+                "cost_ph": "Įveskite darbines išlaidas",
+                "auto_cost": "Išlaidoms - 30%",
                 "submit": "Pateikti",
-                "back": "Grįžti"
+                "back": "Grįžti",
+                "income": "Pajamos",
+                "profit": "Pelnas",
+                "costs": "Išlaidos",                
+                "psd": "PSD",
+                "vsd": "VSD",
+                "pension": "Pensija",
+                "gpm": "GPM",
+                "net_earn": "Uždarbis po mokesčių",
+                "total_tax": "Iš viso mokesčių",
+                "tax_perc": "Iš viso mokesčių, %"
+
             },
             {
 
@@ -19,10 +32,10 @@
             },
             {
                 "lang": "Kalba",
-                "fixed_psd": "Fiksuotas PSD",
+                "fixed_psd": "Fiksuotas\nPSD",
                 "yes": "Taip",
                 "no": "Ne",
-                "spend_30": "Išlaidos 30%",
+                "spend_30": "Išlaidos\n30%",
                 "pension": "Pensija",
                 "save": "Išsaugoti",
                 "cancel": "Atšaukti",
@@ -30,7 +43,7 @@
                 "spend_help": "Kadangi PSD ir VSD (valstybės socialinis draudimas) mokamas nuo 90% pelno (pajamos minus išlaidos), norint apskaičiuoti pelną, svarbu žinoti darbines išlaidas.\n\nPagal VMI tvarką, nedeklaruojamų išlaidų galima turėti 30% nuo visų pajamų, o jei išlaidos didesnės - būtina jas deklaruoti pateikiant dokumentus.\n\nJei manote, kad daug išlaidų neturėsite ir/ar nekaupiate dokumentų, rekomenduojama žymėti 'Taip'. Priešingu atveju, reikės įvesti metines išlaidas ranka.",
                 "pension_help": "Prie VSD (12.52% nuo 90% pelno) prisideda ir kaupiamos pensijos koeficientas.\n\nNorėdami sužinoti savo pensijos kaupimo procentą, nueikite į savo Sodros paskyrą gyventojui.\n\nŠis procentas prisidės prie VSD procento, tad iš viso abu šie mokesčiai gali sudaryti 12.52%, kai pensijos nekaupiate, 15.22%, kai kaupiate 2.7%, ir 15.52%, kai kaupiate 3% pensijos.",
                 "save_changes": "Išsaugoti pakeitimus",
-                "save_quit": "Išsaugoti ir išjungti",
+                "save_quit": "Išsaugoti\nir išjungti",
                 "take_effect": "Kad šie pakeitimai pradėtų galioti,\npaleiskite programėlę iš naujo"
             }
     ],
@@ -43,8 +56,21 @@
             },
             {
                 "input_ph": "Enter your earnings before tax",
+                "cost_ph": "Enter your work related costs",
+                "auto_cost": "Expenditure - 30%",
                 "submit": "Submit",
-                "back": "Back"
+                "back": "Back",
+                "income": "Total income",
+                "profit": "Profit",
+                "costs": "Costs",                
+                "psd": "CHI",
+                "vsd": "SSI",
+                "pension": "Pension",
+                "gpm": "Income tax",
+                "net_earn": "Earnings after tax",
+                "total_tax": "Total tax",
+                "tax_perc": "Total tax, %"
+
             },
             {
 
