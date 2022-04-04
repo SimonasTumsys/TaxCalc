@@ -2,20 +2,16 @@ from logging import root
 from kivy.app import App
 from kivymd.uix.screen import Screen
 from kivy.properties import ObjectProperty
-from kivy.properties import ListProperty
 from kivy.uix.screenmanager import ScreenManager
 from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
+import os
 import json
-import kivymd
-
 
 
 class CalculatedLayout(GridLayout):
     pass
     
-
-
 class MainWindow(Screen):
     pass
 
@@ -72,14 +68,48 @@ class CalcWindow(Screen):
         pass
 
 
-        
-    
 
-            
+
 
 
 class EarnWindow(Screen):
+
+    # def scan_fs():
+    #     with open('pdf_paths.json', 'r') as f:
+    #         pdf_paths = json.load(f)
+
+    #     bf_paths = []
+    #     for root,dirs,files in os.walk("/"):
+    #         bf_paths.extend((os.path.join(root,f) for f in files if f.endswith("Weekly Report.pdf")))
+        
+    #     for path in bf_paths:
+    #         pdf = open(path, 'rb')
+    #         pdfReader = PdfFileReader(pdf)
+
+    #         print("PDF File name: " + str(pdfReader.getDocumentInfo().title))
+
+    #         bf_obj = {path:"text"}
+
+    #         numOfPages = pdfReader.getNumPages()
+
+    #         for i in range(0, numOfPages):
+    #             print("Page Number: " + str(i))
+    #             print("- - - - - - - - - - - - - - - - - - - -")
+    #             pageObj = pdfReader.getPage(i)
+    #             print(pageObj.extractText())
+    #             print("- - - - - - - - - - - - - - - - - - - -")
+    #         # close the PDF file object
+    #         pdf.close()
+            
+    # scan_fs()
+            
+        
+    
+    
+    # def handle_pdf():
+    #     for path in bf_paths:
     pass
+
 
 class StatWindow(Screen):
     pass
@@ -135,8 +165,8 @@ class TaxCalc(App):
             lang_data = lang_data[lang]
         return lang_data
     
-    def build(self):
-        self.icon = 'temp_icon.jpg'
+    # def build(self):
+    #     self.icon = 'temp_icon.jpg'
 
 
     lang_data = get_lang()

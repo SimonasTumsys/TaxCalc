@@ -1,4 +1,4 @@
-#:kivy 2.1.0
+#:kivy 2.0.0
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
@@ -53,6 +53,9 @@ WindowManager:
                 font_size: (root.width + root.height) / 30
                 text: app.lang_data[0]['enter_earn']
                 font_name: 'DejaVuSans'
+                on_release:
+                    app.root.current = "earn"
+
             
             StrokeButton: ##Statistics button
                 font_size: (root.width + root.height) / 30
@@ -140,6 +143,23 @@ WindowManager:
                
 <EarnWindow>:
     name: "earn"
+    
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex(app.colors['bg_main'])
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    GridLayout:
+        size_hint: 0.85, 0.5
+        pos_hint: {'center_x': .5, 'center_y': .65}
+        cols: 1
+        spacing: [0,10]
+
+
+
+
 
 <StatWindow>:
     name: "stat"
@@ -286,7 +306,7 @@ WindowManager:
     
 
     HelpButton:
-        pos_hint: {'x':0.013, 'y':0.777}
+        pos_hint: {'x':0.013, 'y':0.775}
         id: psd_help_button
         on_release: Factory.PSDHelpPopup().open()
 
