@@ -1,5 +1,43 @@
 {
-  "bf": [],
-  "bf_dates": [],
-  "wolt": []
+  "bf": [
+    "C:/Users/PC/Desktop/Bolt Documents\\2021-04-26 -- 2021-05-03 Simonas Tumsys Weekly Report.pdf",
+    "C:/Users/PC/Desktop/Bolt Documents\\2021-05-03 -- 2021-05-10 Simonas Tumsys Weekly Report (1).pdf",
+    "C:/Users/PC/Desktop/Bolt Documents\\2021-05-10 -- 2021-05-17 Simonas Tumsys Weekly Report.pdf",
+    "C:/Users/PC/Desktop/Bolt Documents\\2021-05-31 -- 2021-06-07 Simonas Tumsys Weekly Report.pdf",
+    "C:/Users/PC/Desktop/Bolt Documents\\2021-10-25 -- 2021-11-01 Simonas Tumsys Weekly Report (1).pdf"
+  ],
+  "meta_list_bf": [
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132426+00'00'",
+      "ModDate": "D:20220401132426+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132434+00'00'",
+      "ModDate": "D:20220401132434+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132555+00'00'",
+      "ModDate": "D:20220401132555+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132509+00'00'",
+      "ModDate": "D:20220401132509+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132306+00'00'",
+      "ModDate": "D:20220401132306+00'00'"
+    }
+  ],
+  "wolt": [],
+  "meta_list_wolt": []
 }
