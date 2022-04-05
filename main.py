@@ -7,8 +7,10 @@ from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
 import os
 import json
+from matplotlib import dates
 import pdfplumber
-from datetime import datetime
+from datetime import date, datetime
+import sqlite3
 
 
 class CalculatedLayout(GridLayout):
@@ -75,68 +77,102 @@ class CalcWindow(Screen):
 
 
 class EarnWindow(Screen):
-
+    ##Function to scan filesystem for Bolt Food (bf) and
+    # Wolt (w) PDFs
     def scan_fs():
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
 
         bf_paths = pdf_paths['bf']
-        bf_dates = pdf_paths['bf_dates']
+        meta_list = pdf_paths['meta_list_bf']
         temp_bf_paths = []
         temp_w_paths = []
-        
-        for root,dirs,files in os.walk("/"):
+    ##Need to write a function with FileChooser to let the user choose directory
+    # otherwise too slow    
+        fs_path = r'C:\Users\PC\Desktop\Bolt Documents'
+        fs_fixed_path = fs_path.replace('\\', '/')
+
+
+    ##Scanning specified directory for Bolt Food PDFs and their metadata:
+        for root,dirs,files in os.walk(fs_fixed_path):
             temp_bf_paths.extend((os.path.join(root,f) for f in files if 'Weekly Report' in f and '.pdf' in f))
             for temp_bf_path in temp_bf_paths:
-                if temp_bf_path not in bf_paths:
+                fixed_temp_path = temp_bf_path.replace('\\', '/')
+                with pdfplumber.open(fixed_temp_path) as temp_pdf:
+                    temp_meta = temp_pdf.metadata
+    ##Validation to avoid including duplicate PDFs into json            
+                if temp_bf_path not in bf_paths and temp_meta not in meta_list:
                     bf_paths.append(temp_bf_path)
+                    meta_list.append(temp_meta)
 
-        
         pdf_paths['bf'] = bf_paths
-        pdf_paths['bf_dates'] = bf_dates
+        pdf_paths['meta_list_bf'] = meta_list
 
         with open('pdf_paths.json', 'w') as f:
             json.dump(pdf_paths, f, indent=2)
 
+
+
     def handle_pdf():
-        ed_dict = {}
+        conn = sqlite3.connect('pdf_data.db')
+        c = conn.cursor()
+        # c.execute("""CREATE TABLE dated_earnings (
+        #     start_date text,
+        #     end_date text,
+        #     earnings real,
+        #     pdf_meta text unique
+        # )""")
+
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
-## Handling Bolt Food pdfs - extracting date and earnings:
+        ## Handling Bolt Food pdfs - extracting date and earnings:
         for path in pdf_paths['bf']:
-            fixed_path = path.replace('\\', '/')
-            with pdfplumber.open(fixed_path) as temp:
-                pages = []
-                for page in temp.pages:
-                    pages.append(page.extract_text())
-                    pdf_text = ''.join(pages)
-
-            date_start_index = pdf_text.find('Ataskaita už laikotarpį: ') + 25
-            date_end_index = pdf_text.find('Ataskaita už laikotarpį: ') + 48
-            date = pdf_text[date_start_index:date_end_index]
-
-            earn_start_index = pdf_text.find('Savaitinis uždarbis') + 20
-            earn_end_index = pdf_text.find('Savaitinis uždarbis') + 26
-
-            earnings_no_cash = float(pdf_text[earn_start_index:earn_end_index])
             try:
-                cash_start_index = pdf_text.rfind('Grynieji pinigai iš kliento') + 28
-                cash_end_index = pdf_text.find('Savaitinis uždarbis') - 3
+                fixed_path = path.replace('\\', '/')
+                with pdfplumber.open(fixed_path) as temp:
+                    pdf_meta = temp.metadata
+                    pages = []
+                    for page in temp.pages:
+                        pages.append(page.extract_text())
+                        pdf_text = ''.join(pages)
 
-                cash_raw = pdf_text[cash_start_index:cash_end_index]
-                cash_cutoff = cash_raw.find('0.00') + 6
-                cash = float(cash_raw[cash_cutoff:len(cash_raw)])
-            except ValueError:
-                cash = 0.0
+                date_start_index = pdf_text.find('Ataskaita už laikotarpį: ') + 25
+                date_end_index = pdf_text.find('Ataskaita už laikotarpį: ') + 48
+                date = pdf_text[date_start_index:date_end_index]
 
-            earnings = earnings_no_cash + cash
+                earn_start_index = pdf_text.find('Savaitinis uždarbis') + 20
+                earn_end_index = pdf_text.find('Savaitinis uždarbis') + 26
 
-            ed_dict[date] = earnings
-        return ed_dict
+                earnings_no_cash = float(pdf_text[earn_start_index:earn_end_index])
+                try:
+                    cash_start_index = pdf_text.rfind('Grynieji pinigai iš kliento') + 28
+                    cash_end_index = pdf_text.find('Savaitinis uždarbis') - 3
 
-    print(handle_pdf())
+                    cash_raw = pdf_text[cash_start_index:cash_end_index]
+                    cash_cutoff = cash_raw.find('0.00') + 6
+                    cash = float(cash_raw[cash_cutoff:len(cash_raw)])
+                except ValueError:
+                    cash = 0.0
 
+                earnings = earnings_no_cash + cash
 
+                start_date_string = date[0:10]
+                end_date_string = date[13:23]
+
+                meta_string = pdf_meta['ModDate']
+
+                # c.execute('INSERT INTO dated_earnings VALUES (?, ?, ?, ?)', (start_date_string, end_date_string, earnings, meta_string))
+
+            except sqlite3.IntegrityError:
+                continue
+
+            c.execute("SELECT * FROM dated_earnings")
+
+            print(c.fetchall())
+            conn.commit()
+            conn.close()
+
+    handle_pdf()
 
 
 class StatWindow(Screen):
