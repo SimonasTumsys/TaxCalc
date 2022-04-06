@@ -1,16 +1,18 @@
-from logging import root
-from turtle import clear
-from kivy.app import App
 from kivymd.uix.screen import Screen
 from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager
-from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
+from kivymd.app import MDApp
+from kivymd.uix.filemanager import MDFileManager
+from kivy.core.window import Window
+from kivymd.toast import toast
 import os
 import json
 import pdfplumber
 import datetime
 import sqlite3
+
 
 
 class CalculatedLayout(GridLayout):
@@ -71,10 +73,47 @@ class CalcWindow(Screen):
     def useless(self):
         pass
 
+class FileManager(BoxLayout):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        Window.bind(on_keyboard=self.events)
+        self.manager_open = False
+        self.file_manager = MDFileManager(
+            exit_manager=self.exit_manager,
+            select_path=self.select_path,
+            preview=False,
+        )
 
+    def file_manager_open(self):
+        with open('pdf_paths.json', 'r') as f:
+            pdf_paths = json.load(f)
+            path = pdf_paths['main_path']
 
+        self.file_manager.show(path)  # output manager to the screen
+        self.manager_open = True
 
+    def select_path(self, path):
+        self.exit_manager()
+        toast(path)
+        with open('pdf_paths.json', 'r') as f:
+            pdf_paths = json.load(f)
+            pdf_paths['main_path'] = path
+        with open('pdf_paths.json', 'w') as f:
+            json.dump(pdf_paths, f, indent=2)
 
+    def exit_manager(self, *args):
+        '''Called when the user reaches the root of the directory tree.'''
+
+        self.manager_open = False
+        self.file_manager.close()
+
+    def events(self, instance, keyboard, keycode, text, modifiers):
+        '''Called when buttons are pressed on the mobile device.'''
+
+        if keyboard in (1001, 27):
+            if self.manager_open:
+                self.file_manager.back()
+        return True
 
 class EarnWindow(Screen):
     ##Function to scan filesystem for Bolt Food (bf) and
@@ -91,9 +130,7 @@ class EarnWindow(Screen):
         meta_list = pdf_paths['meta_list']
         temp_paths = []
 
-    ##Need to write a function with FileChooser to let the user choose directory
-    # otherwise too slow    
-        fs_path = r'C:\Users\PC\Desktop\Bolt Documents'
+        fs_path = pdf_paths['main_path']
         fs_fixed_path = fs_path.replace('\\', '/')
 
     ##Scanning specified directory for Bolt Food and Wolt PDFs and their metadata:
@@ -223,11 +260,6 @@ class EarnWindow(Screen):
         conn.commit()
         conn.close()
 
-    reset_db()
-    scan_fs()
-    handle_pdf()
-
-
 class StatWindow(Screen):
     pass
 
@@ -265,7 +297,7 @@ class SettWindow(Screen):
 class WindowManager(ScreenManager):
     pass
 
-class TaxCalc(App):
+class TaxCalc(MDApp):
     def get_sett():
         with open('settings.json') as f:
             settings = json.load(f)

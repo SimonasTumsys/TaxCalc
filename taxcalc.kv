@@ -157,8 +157,25 @@ WindowManager:
         cols: 1
         spacing: [0,10]
 
+        FileManager:
 
 
+<FileManager>:
+    BoxLayout:
+        orientation: 'vertical'
+
+        MDToolbar:
+            title: "MDFileManager"
+            left_action_items: [['menu', lambda x: None]]
+            elevation: 10
+
+        MDFloatLayout:
+
+            MDRoundFlatIconButton:
+                text: "Open manager"
+                icon: "folder"
+                pos_hint: {'center_x': .5, 'center_y': .6}
+                on_release: root.file_manager_open()
 
 
 <StatWindow>:
