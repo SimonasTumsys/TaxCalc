@@ -1,4 +1,5 @@
 from logging import root
+from turtle import clear
 from kivy.app import App
 from kivymd.uix.screen import Screen
 from kivy.properties import ObjectProperty
@@ -7,7 +8,6 @@ from kivy.lang import Builder
 from kivy.uix.gridlayout import GridLayout
 import os
 import json
-from matplotlib import dates
 import pdfplumber
 from datetime import date, datetime
 import sqlite3
@@ -83,6 +83,9 @@ class EarnWindow(Screen):
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
 
+
+        pdf_paths['bf'] = []
+        pdf_paths['meta_list_bf'] = []
         bf_paths = pdf_paths['bf']
         meta_list = pdf_paths['meta_list_bf']
         temp_bf_paths = []
@@ -91,7 +94,6 @@ class EarnWindow(Screen):
     # otherwise too slow    
         fs_path = r'C:\Users\PC\Desktop\Bolt Documents'
         fs_fixed_path = fs_path.replace('\\', '/')
-
 
     ##Scanning specified directory for Bolt Food PDFs and their metadata:
         for root,dirs,files in os.walk(fs_fixed_path):
@@ -112,20 +114,14 @@ class EarnWindow(Screen):
             json.dump(pdf_paths, f, indent=2)
 
 
-
+    ## Function to extract data from pdfs, save into db:
     def handle_pdf():
         conn = sqlite3.connect('pdf_data.db')
         c = conn.cursor()
-        # c.execute("""CREATE TABLE dated_earnings (
-        #     start_date text,
-        #     end_date text,
-        #     earnings real,
-        #     pdf_meta text unique
-        # )""")
 
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
-        ## Handling Bolt Food pdfs - extracting date and earnings:
+        ## Handling Bolt Food pdfs:
         for path in pdf_paths['bf']:
             try:
                 fixed_path = path.replace('\\', '/')
@@ -159,20 +155,38 @@ class EarnWindow(Screen):
                 start_date_string = date[0:10]
                 end_date_string = date[13:23]
 
-                meta_string = pdf_meta['ModDate']
+                meta_string = pdf_meta['CreationDate']
 
-                # c.execute('INSERT INTO dated_earnings VALUES (?, ?, ?, ?)', (start_date_string, end_date_string, earnings, meta_string))
+                c.execute('INSERT INTO dated_earnings VALUES (?, ?, ?, ?)',
+                    (start_date_string, end_date_string, earnings, meta_string))
 
             except sqlite3.IntegrityError:
                 continue
 
-            c.execute("SELECT * FROM dated_earnings")
-
-            print(c.fetchall())
             conn.commit()
-            conn.close()
+        conn.close()
+
+    def create_db():
+        conn = sqlite3.connect('pdf_data.db')
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS dated_earnings (
+            start_date text,
+            end_date text,
+            earnings real,
+            pdf_meta text unique
+        )""")
+        conn.commit()
+        conn.close()
+
+    def clear_db():
+        conn = sqlite3.connect('pdf_data.db')
+        c = conn.cursor()
+        c.execute('''DROP TABLE IF EXISTS dated_earnings''')
+        conn.commit()
+        conn.close()
 
     handle_pdf()
+
 
 
 class StatWindow(Screen):
