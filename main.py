@@ -307,6 +307,11 @@ class TaxCalc(MDApp):
         with open('colors.json') as f:
             colors = json.load(f)
             return colors
+
+    def get_path():
+        with open('pdf_paths.json') as f:
+            path = json.load(f)
+            return path
     
     def get_lang(lang = get_sett()['language']):
         with open('language.json', encoding='utf-8') as f:
@@ -321,6 +326,7 @@ class TaxCalc(MDApp):
     lang_data = get_lang()
     settings = get_sett()
     colors = get_col()
+    path = get_path()
 
 
 TaxCalc().run()
