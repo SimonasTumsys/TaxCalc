@@ -29,16 +29,16 @@ WindowManager:
     FloatLayout:
         Image: ##App banner
             id: 'main_banner'
-            source: 'app-banner2.png'
+            source: './images/banner_small.png'
             size: self.texture_size
-            pos_hint: {'center_x':0.3, 'center_y': 0.825}
-            size_hint: (0.5, 0.5)
+            pos_hint: {'center_x':0.5, 'center_y': 0.825}
+            size_hint: (0.8, 0.8)
 
         BoxLayout: #Button container with layout, size and spacing
             spacing: 10
             orientation: "vertical"
             size_hint: 0.80, 0.5
-            pos_hint: {'center_x': .5, 'center_y': .4}
+            pos_hint: {'center_x': .5, 'center_y': .425}
 
         ##Main window buttons:
 
@@ -151,14 +151,42 @@ WindowManager:
             pos: self.pos
             size: self.size
 
-    GridLayout:
-        size_hint: 0.85, 0.5
-        pos_hint: {'center_x': .5, 'center_y': .65}
-        cols: 1
-        spacing: [0,10]
+
+    BoxLayout:
+        pos_hint: {'center_x': .5, 'center_y': .75}
+        size_hint: 0.85, 0.3
+        orientation: 'vertical'
+
+        Label:
+            halign: 'left'
+            text_size: self.size
+            text: 'Pasirinkite aplanką su Bolt/Wolt PDF dokumentais'
+        FileManager:
 
 
+<FileManager>:
+    BoxLayout:
+        orientation: 'horizontal'
+        TextInput:
+            pos_hint: {'center_x': .5, 'center_y': 1}
+            size_hint: 0.8, 0.35
+            id: total_earnings
+            multiline: False
+            font_size: (root.width + root.height) / 30
+            hint_text: app.path['main_path']
+            hint_text_color: app.colors['hint_text']
+            input_filter: 'float'
+            disabled: True
 
+        MDIconButton:
+            halign: 'right'
+            text_size: self.size
+            icon: "folder"
+            icon_size: 0.5, 0.5
+            pos_hint: {'x': .5, 'y': .75}
+            theme_icon_color: "Custom"
+            icon_color: app.colors['btn_bg']
+            on_release: root.file_manager_open()
 
 
 <StatWindow>:
@@ -333,13 +361,15 @@ WindowManager:
             size: separator.width, 2
 
 <StyledButton@Button>:
+    elevation: 10
     background_color: (0,0,0,0)
     background_normal: ''
-    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## Grey
-    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Black
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
     font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     ##Font color:
-    color: self.back_color_press if self.state == 'normal' else self.font_color_press
+    color: self.font_black_color if self.state == 'normal' else self.font_color_press
 
 <StrokeButton@StyledButton>:
     border_radius: 25
@@ -363,6 +393,7 @@ WindowManager:
     font_size: (root.width + root.height) / 8
     background_color: (0,0,0,0)
     background_normal: ''
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
     back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## Grey
     back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Black
     font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
@@ -370,7 +401,7 @@ WindowManager:
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     allow_no_selection: False
     ##Font color when pressed and not pressed
-    color: self.back_color_press if self.state == 'normal' else self.font_color_press
+    color: self.font_black_color if self.state == 'normal' else self.font_color_press
     ##Color when pressed and not pressed
     canvas.before:
         Color:
@@ -470,7 +501,7 @@ WindowManager:
 
 <SettingsLabel@Label>:
     font_size: (root.width + root.height) / 13
-    color: utils.get_color_from_hex(app.colors['btn_side'])
+    color: utils.get_color_from_hex(app.colors['font_black'])
     halign: 'center'
 
 <DataButton@StyledButton>:
