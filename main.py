@@ -83,36 +83,44 @@ class EarnWindow(Screen):
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
 
-
         pdf_paths['bf'] = []
-        pdf_paths['meta_list_bf'] = []
+        pdf_paths['wolt'] = []
+        pdf_paths['meta_list'] = []
         bf_paths = pdf_paths['bf']
-        meta_list = pdf_paths['meta_list_bf']
-        temp_bf_paths = []
-        temp_w_paths = []
+        wolt_paths = pdf_paths['wolt']
+        meta_list = pdf_paths['meta_list']
+        temp_paths = []
+
     ##Need to write a function with FileChooser to let the user choose directory
     # otherwise too slow    
         fs_path = r'C:\Users\PC\Desktop\Bolt Documents'
         fs_fixed_path = fs_path.replace('\\', '/')
 
-    ##Scanning specified directory for Bolt Food PDFs and their metadata:
+    ##Scanning specified directory for Bolt Food and Wolt PDFs and their metadata:
         for root,dirs,files in os.walk(fs_fixed_path):
-            temp_bf_paths.extend((os.path.join(root,f) for f in files if 'Weekly Report' in f and '.pdf' in f))
-            for temp_bf_path in temp_bf_paths:
-                fixed_temp_path = temp_bf_path.replace('\\', '/')
+            temp_paths.extend((os.path.join(root,f) for f in files if '.pdf' in f))
+            for temp_path in temp_paths:
+                fixed_temp_path = temp_path.replace('\\', '/')
                 with pdfplumber.open(fixed_temp_path) as temp_pdf:
+                    pdf_text = temp_pdf.pages[0].extract_text()
+    ##Validation to avoid including duplicate PDFs into json   
+                if pdf_text.find('Bolt Operations') != -1:
                     temp_meta = temp_pdf.metadata
-    ##Validation to avoid including duplicate PDFs into json            
-                if temp_bf_path not in bf_paths and temp_meta not in meta_list:
-                    bf_paths.append(temp_bf_path)
-                    meta_list.append(temp_meta)
+                    if temp_path not in bf_paths and temp_meta not in meta_list:
+                        bf_paths.append(temp_path)
+                        meta_list.append(temp_meta)
+                elif pdf_text.find('UAB Wolt LT') != -1:
+                    temp_meta = temp_pdf.metadata
+                    if temp_path not in wolt_paths and temp_meta not in meta_list:
+                        wolt_paths.append(temp_path)
+                        meta_list.append(temp_meta)
 
         pdf_paths['bf'] = bf_paths
-        pdf_paths['meta_list_bf'] = meta_list
+        pdf_paths['wolt'] = wolt_paths
+        pdf_paths['meta_list'] = meta_list
 
         with open('pdf_paths.json', 'w') as f:
             json.dump(pdf_paths, f, indent=2)
-
 
     ## Function to extract data from pdfs, save into db:
     def handle_pdf():
@@ -184,8 +192,6 @@ class EarnWindow(Screen):
         c.execute('''DROP TABLE IF EXISTS dated_earnings''')
         conn.commit()
         conn.close()
-
-    handle_pdf()
 
 
 
