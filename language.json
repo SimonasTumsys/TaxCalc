@@ -26,7 +26,10 @@
             },
             {
                 "scan": "Skenuoti",
-                "back": "Grįžti"
+                "back": "Grįžti",
+                "platform": "Platforma",
+                "week": "Savaitė",
+                "earnings": "Uždarbis"
             },
             {
 
@@ -76,7 +79,10 @@
             },
             {
                 "scan": "Scan",
-                "back": "Back"
+                "back": "Back",
+                "platform": "Platform",
+                "week": "Week",
+                "earnings": "Earnings"
             },
             {
 

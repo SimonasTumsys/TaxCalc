@@ -1,3 +1,4 @@
+from multiprocessing import Manager
 from kivymd.uix.screen import Screen
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
@@ -173,12 +174,14 @@ class EarnWindow(Screen):
 
         with open('pdf_paths.json', 'w') as f:
             json.dump(pdf_paths, f, indent=2)
+
+        
         
     
 
 
     ## Function to extract data from pdfs, save into db:
-    def handle_pdf():
+    def handle_pdf(self):
         # pb = ProgressBar(max = 1000)
         # self.ids.pb_container.add_widget(pb)
         conn = sqlite3.connect('pdf_data.db')
@@ -289,7 +292,7 @@ class EarnWindow(Screen):
 
 
 
-    def fetch_data():
+    def fetch_data(self):
         conn = sqlite3.connect('pdf_data.db')
         c = conn.cursor()
         date_earn_obj = c.execute("""SELECT platform,
@@ -298,18 +301,21 @@ class EarnWindow(Screen):
         earnings
         FROM dated_earnings""")
         earn_data = date_earn_obj.fetchall()
+        conn.close()
         return earn_data
 
         
 
-    def show_smaller_table(self, data = fetch_data()):
+    def show_smaller_table(self):
+        data = EarnWindow().fetch_data()
         container = self.ids.db_container
-        headerButtonPlatform = TableButton(text='Platforma')
-        headerButtonWeek = TableButton(text='Savaitė')
-        headerButtonEarn = TableButton(text='Uždarbis')
-        container.add_widget(headerButtonPlatform)
-        container.add_widget(headerButtonWeek)
-        container.add_widget(headerButtonEarn)
+        if data != []:
+            headerButtonPlatform = TableButton(text='[b]'+ TaxCalc().get_lang()[2]['platform'] +'[/b]', markup=True)
+            headerButtonWeek = TableButton(text='[b]'+ TaxCalc().get_lang()[2]['week'] +'[/b]', markup=True)
+            headerButtonEarn = TableButton(text='[b]'+ TaxCalc().get_lang()[2]['earnings'] +'[/b]', markup=True)
+            container.add_widget(headerButtonPlatform)
+            container.add_widget(headerButtonWeek)
+            container.add_widget(headerButtonEarn)
         for row in data:
             formatted_vals = []
             platform = row[0]
@@ -331,11 +337,6 @@ class EarnWindow(Screen):
             for val in formatted_vals:
                 tableButton = TableButton(text=str(val))
                 container.add_widget(tableButton)
-
-
-                
-                ## tableButton = TableButton(text=str(row[row.index(val)]))
-
 
 class TableButton(Button):
     pass
@@ -399,7 +400,7 @@ class TaxCalc(MDApp):
             path = json.load(f)
             return path
     
-    def get_lang(lang = get_sett()['language']):
+    def get_lang(self, lang = get_sett()['language']):
         with open('language.json', encoding='utf-8') as f:
             lang_data = json.load(f)
             lang_data = lang_data[lang]
@@ -409,7 +410,7 @@ class TaxCalc(MDApp):
     #     self.icon = 'temp_icon.jpg'
 
 
-    lang_data = get_lang()
+    # lang_data = get_lang()
     settings = get_sett()
     colors = get_col()
     path = get_path()

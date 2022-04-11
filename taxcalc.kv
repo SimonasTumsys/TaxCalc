@@ -45,34 +45,35 @@ WindowManager:
 
             StrokeButton: ##Calculator button 
                 font_size: (root.width + root.height) / 30
-                text: app.lang_data[0]['calc']
+                text: app.get_lang()[0]['calc']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = "calc"
 
             StrokeButton: ##Enter earnings button
                 font_size: (root.width + root.height) / 30
-                text: app.lang_data[0]['enter_earn']
+                text: app.get_lang()[0]['enter_earn']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = "earn"
+                    app.root.get_screen('earn').show_smaller_table()
 
             
             StrokeButton: ##Statistics button
                 font_size: (root.width + root.height) / 30
-                text: app.lang_data[0]['stats']
+                text: app.get_lang()[0]['stats']
                 font_name: 'DejaVuSans'
                 
             StrokeButton: ##Settings button
                 font_size: (root.width + root.height) / 30
-                text: app.lang_data[0]['sett']
+                text: app.get_lang()[0]['sett']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'sett'
             
             StrokeButton: ##About button
                 font_size: (root.width + root.height) / 30
-                text: app.lang_data[0]['about']
+                text: app.get_lang()[0]['about']
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'about'
@@ -100,7 +101,7 @@ WindowManager:
             id: total_earnings
             multiline: False
             font_size: (root.width + root.height) / 55
-            hint_text: app.lang_data[1]['input_ph']
+            hint_text: app.get_lang()[1]['input_ph']
             hint_text_color: app.colors['hint_text']
             input_filter: 'float'
 
@@ -111,7 +112,7 @@ WindowManager:
             background_color: 1,1,1,1
             multiline: False
             font_size: (root.width + root.height) / 55
-            hint_text: app.lang_data[1]['cost_ph'] if app.settings['spend_30_percent'] == False else app.lang_data[1]['auto_cost']
+            hint_text: app.get_lang()[1]['cost_ph'] if app.settings['spend_30_percent'] == False else app.get_lang()[1]['auto_cost']
             hint_text_color: app.colors['hint_text']
             input_filter: 'float'
             disabled: True if app.settings['spend_30_percent'] == True else False
@@ -124,7 +125,7 @@ WindowManager:
             row_default_height: self.height*0.2
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: app.lang_data[1]['submit']
+                text: app.get_lang()[1]['submit']
                 on_release:
                     root.ids.calc_container.clear_widgets() 
                     root.add_calcLayoutWidget() if root.ids.total_earnings.text != '' else root.useless()
@@ -134,7 +135,7 @@ WindowManager:
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: app.lang_data[1]['back']
+                text: app.get_lang()[1]['back']
                 on_release:
                     root.ids.total_earnings.text = ''
                     root.ids.calc_container.clear_widgets()
@@ -192,25 +193,35 @@ WindowManager:
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: app.lang_data[2]['scan']
+                text: app.get_lang()[2]['scan']
                 on_release:
-                #     root.scan_fs()
-                #     root.handle_pdf()
+                    root.scan_fs()
+                    root.handle_pdf()
+                    root.ids.db_container.clear_widgets()    
                     root.show_smaller_table()
+                    
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: app.lang_data[2]['back']
+                text: app.get_lang()[2]['back']
                 on_release:
+                    root.ids.db_container.clear_widgets()   
                     app.root.current = 'main'
 
 
-    
-        
-    GridLayout:
-        cols: 3
-        size_hint: 0.8, 0.5
+    ScrollView:
+        size_hint: 0.8, 0.55
         pos_hint: {'center_x': .5, 'center_y': .4}
-        id: db_container
+        do_scroll_x: False
+        do_scroll_y: True
+        GridLayout:
+            size: (root.width, root.height)
+            size_hint_x: 1
+            size_hint_y: None
+            cols: 3
+            height: self.minimum_height
+            row_default_height: '30dp'
+            row_force_default: True
+            id: db_container
 
 
 <TableButton>:
@@ -265,7 +276,7 @@ WindowManager:
 
             ##Language setting label and button
             SettingsLabel:
-                text: app.lang_data[4]['lang']
+                text: app.get_lang()[4]['lang']
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
@@ -290,18 +301,18 @@ WindowManager:
             padding: [0,0,30,0]
 
             SettingsLabel:
-                text: app.lang_data[4]['fixed_psd']
+                text: app.get_lang()[4]['fixed_psd']
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
                 SettingsToggleButton:
                     id: psd_button_true
-                    text: app.lang_data[4]['yes']
+                    text: app.get_lang()[4]['yes']
                     group: 'psd'
                     state: 'down' if app.settings['psd_fixed'] == True else 'normal'
                 SettingsToggleButton:
                     id: psd_button_false
-                    text: app.lang_data[4]['no']
+                    text: app.get_lang()[4]['no']
                     group: 'psd'
                     state: 'down' if app.settings['psd_fixed'] == False else 'normal'
 
@@ -315,19 +326,19 @@ WindowManager:
 
             ##Spending setting label and button
             SettingsLabel:
-                text: app.lang_data[4]['spend_30']
+                text: app.get_lang()[4]['spend_30']
                 halign: 'center'
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
                 SettingsToggleButton:
                     id: spend_button_true
-                    text: app.lang_data[4]['yes']
+                    text: app.get_lang()[4]['yes']
                     group: 'spend'
                     state: 'down' if app.settings['spend_30_percent'] == True else 'normal'
                 SettingsToggleButton:
                     id: spend_button_false
-                    text: app.lang_data[4]['no']
+                    text: app.get_lang()[4]['no']
                     group: 'spend'
                     state: 'down' if app.settings['spend_30_percent'] == False else 'normal'
 
@@ -342,7 +353,7 @@ WindowManager:
 
             ##Pension setting label and button
             SettingsLabel:
-                text: app.lang_data[4]['pension']
+                text: app.get_lang()[4]['pension']
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
@@ -372,13 +383,13 @@ WindowManager:
             padding: 30
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: app.lang_data[4]['save']
+                text: app.get_lang()[4]['save']
                 on_release:
                     Factory.TakeEffectPopup().open()
 
             StrokeButton:
                 font_size: (root.width + root.height) / 35
-                text: app.lang_data[4]['cancel']
+                text: app.get_lang()[4]['cancel']
                 on_release: 
                     app.root.current = "main"
     
@@ -524,26 +535,26 @@ WindowManager:
     #background_color: utils.get_color_from_hex('#242725')
 
 <PSDHelpPopup@HelpPopup>:
-    title: app.lang_data[4]['fixed_psd']
+    title: app.get_lang()[4]['fixed_psd']
     BoxLayout:
         orientation: 'vertical'
         PopupLabel:
-            text: app.lang_data[4]['psd_help']
+            text: app.get_lang()[4]['psd_help']
 
 <SpendHelpPopup@HelpPopup>:
-    title: app.lang_data[4]['spend_30']
+    title: app.get_lang()[4]['spend_30']
     BoxLayout:
         orientation: 'vertical'
         PopupLabel:
-            text: app.lang_data[4]['spend_help']
+            text: app.get_lang()[4]['spend_help']
 
 
 <PensionHelpPopup@HelpPopup>:
-    title: app.lang_data[4]['pension']
+    title: app.get_lang()[4]['pension']
     BoxLayout:
         orientation: 'vertical'
         PopupLabel:
-            text: app.lang_data[4]['pension_help']
+            text: app.get_lang()[4]['pension_help']
 
 <TakeEffectPopup@Popup>:
     size_hint: (0.8, 0.25)
@@ -555,7 +566,7 @@ WindowManager:
     BoxLayout:
         orientation: 'vertical'
         Label:
-            text: app.lang_data[4]['take_effect']
+            text: app.get_lang()[4]['take_effect']
             font_size: (root.width + root.height) / 35
             color: utils.get_color_from_hex(app.colors['font'])
             valign: 'middle'
@@ -566,7 +577,7 @@ WindowManager:
             spacing: 30
             StrokeButton: ##Save and quit button
                 font_size: (root.width + root.height) / 35
-                text: app.lang_data[4]['save_quit']
+                text: app.get_lang()[4]['save_quit']
                 font_name: 'DejaVuSans'
                 size_hint: (1, 0.6)
                 on_release:
@@ -574,7 +585,7 @@ WindowManager:
                     app.stop()
             StrokeButton: ##Cancel button
                 font_size: (root.width + root.height) / 35
-                text: app.lang_data[4]['cancel']
+                text: app.get_lang()[4]['cancel']
                 font_name: 'DejaVuSans'
                 size_hint: (1, 0.6)
                 on_release:
@@ -625,52 +636,52 @@ WindowManager:
     rows: 10
     cols: 2
     DataButtonLabel:
-        text: app.lang_data[1]['income']
+        text: app.get_lang()[1]['income']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[0]
     DataButtonLabel:
-        text: app.lang_data[1]['profit']
+        text: app.get_lang()[1]['profit']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[1]
     DataButtonLabel:
-        text: app.lang_data[1]['costs']
+        text: app.get_lang()[1]['costs']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[2]
     DataButtonLabel:
-        text: app.lang_data[1]['psd']
+        text: app.get_lang()[1]['psd']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[3]
     DataButtonLabel:
-        text: app.lang_data[1]['vsd']
+        text: app.get_lang()[1]['vsd']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[4]
     DataButtonLabel:
-        text: app.lang_data[1]['pension']
+        text: app.get_lang()[1]['pension']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[5]
     DataButtonLabel:
-        text: app.lang_data[1]['gpm']
+        text: app.get_lang()[1]['gpm']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[6]
     DataButtonLabel:
-        text: app.lang_data[1]['net_earn']
+        text: app.get_lang()[1]['net_earn']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[7]
     DataButtonLabel:
-        text: app.lang_data[1]['total_tax']
+        text: app.get_lang()[1]['total_tax']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[8]
     DataButtonLabel:
-        text: app.lang_data[1]['tax_perc']
+        text: app.get_lang()[1]['tax_perc']
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[9]
