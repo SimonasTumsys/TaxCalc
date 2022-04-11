@@ -177,9 +177,6 @@ class EarnWindow(Screen):
 
         
         
-    
-
-
     ## Function to extract data from pdfs, save into db:
     def handle_pdf(self):
         # pb = ProgressBar(max = 1000)
@@ -309,13 +306,20 @@ class EarnWindow(Screen):
     def show_smaller_table(self):
         data = EarnWindow().fetch_data()
         container = self.ids.db_container
+        header_container = self.ids.db_header_container
         if data != []:
-            headerButtonPlatform = TableButton(text='[b]'+ TaxCalc().get_lang()[2]['platform'] +'[/b]', markup=True)
-            headerButtonWeek = TableButton(text='[b]'+ TaxCalc().get_lang()[2]['week'] +'[/b]', markup=True)
-            headerButtonEarn = TableButton(text='[b]'+ TaxCalc().get_lang()[2]['earnings'] +'[/b]', markup=True)
-            container.add_widget(headerButtonPlatform)
-            container.add_widget(headerButtonWeek)
-            container.add_widget(headerButtonEarn)
+            headerButtonPlatform = TableButton(
+                text='[b]'+ TaxCalc().get_lang()[2]['platform'] +'[/b]',
+                markup=True)
+            headerButtonWeek = TableButton(
+                text='[b]'+ TaxCalc().get_lang()[2]['week'] +'[/b]',
+                markup=True)
+            headerButtonEarn = TableButton(
+                text='[b]'+ TaxCalc().get_lang()[2]['earnings'] +'[/b]',
+                markup=True)
+            header_container.add_widget(headerButtonPlatform)
+            header_container.add_widget(headerButtonWeek)
+            header_container.add_widget(headerButtonEarn)
         for row in data:
             formatted_vals = []
             platform = row[0]
@@ -337,6 +341,9 @@ class EarnWindow(Screen):
             for val in formatted_vals:
                 tableButton = TableButton(text=str(val))
                 container.add_widget(tableButton)
+
+
+
 
 class TableButton(Button):
     pass
@@ -385,7 +392,7 @@ class TaxCalc(MDApp):
     def build(self):
         self.theme_cls.primary_palette = "Green"
 
-    def get_sett():
+    def get_sett(self):
         with open('settings.json') as f:
             settings = json.load(f)
         return settings
@@ -400,7 +407,8 @@ class TaxCalc(MDApp):
             path = json.load(f)
             return path
     
-    def get_lang(self, lang = get_sett()['language']):
+    def get_lang(self):
+        lang = TaxCalc().get_sett()['language']
         with open('language.json', encoding='utf-8') as f:
             lang_data = json.load(f)
             lang_data = lang_data[lang]
@@ -409,9 +417,6 @@ class TaxCalc(MDApp):
     # def build(self):
     #     self.icon = 'temp_icon.jpg'
 
-
-    # lang_data = get_lang()
-    settings = get_sett()
     colors = get_col()
     path = get_path()
 
