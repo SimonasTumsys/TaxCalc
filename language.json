@@ -4,7 +4,8 @@
                 "calc": "Skaičiuoklė",
                 "enter_earn": "Įvesti uždarbį",
                 "stats": "Statistika",
-                "sett": "Nustatymai"
+                "sett": "Nustatymai",
+                "about": "Apie"
             },
             {
                 "input_ph": "Įveskite sumą prieš mokesčius",
@@ -22,10 +23,10 @@
                 "net_earn": "Uždarbis po mokesčių",
                 "total_tax": "Iš viso mokesčių",
                 "tax_perc": "Iš viso mokesčių, %"
-
             },
             {
-
+                "scan": "Skenuoti",
+                "back": "Grįžti"
             },
             {
 
@@ -35,7 +36,7 @@
                 "fixed_psd": "Fiksuotas PSD",
                 "yes": "Taip",
                 "no": "Ne",
-                "spend_30": "Išlaidos\n30%",
+                "spend_30": "Išlaidos 30%",
                 "pension": "Pensija",
                 "save": "Išsaugoti",
                 "cancel": "Atšaukti",
@@ -52,12 +53,13 @@
                 "calc": "Calculator",
                 "enter_earn": "Enter earnings",
                 "stats": "Statistics",
-                "sett": "Settings"
+                "sett": "Settings",
+                "about": "About"
             },
             {
                 "input_ph": "Enter your earnings before tax",
                 "cost_ph": "Enter your work related costs",
-                "auto_cost": "Expenditure - 30%",
+                "auto_cost": "Costs - 30%",
                 "submit": "Submit",
                 "back": "Back",
                 "income": "Total income",
@@ -73,7 +75,8 @@
 
             },
             {
-
+                "scan": "Scan",
+                "back": "Back"
             },
             {
 
@@ -83,7 +86,7 @@
                 "fixed_psd": "Fixed CHI",
                 "yes": "Yes",
                 "no": "No",
-                "spend_30": "30%\nexpenditure",
+                "spend_30": "30% costs",
                 "pension": "Pension rate",
                 "save": "Save",
                 "cancel": "Cancel",

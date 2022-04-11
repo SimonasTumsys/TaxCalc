@@ -1,5 +1,4 @@
 from kivymd.uix.screen import Screen
-from kivy.properties import ObjectProperty
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
@@ -7,6 +6,9 @@ from kivymd.app import MDApp
 from kivymd.uix.filemanager import MDFileManager
 from kivy.core.window import Window
 from kivymd.toast import toast
+from kivy.uix.button import Button
+from kivy.uix.scrollview import ScrollView
+from kivy.uix.progressbar import ProgressBar
 import os
 import json
 import pdfplumber
@@ -65,10 +67,11 @@ class CalcWindow(Screen):
 
             output = [total_earn, profit, total_costs, 
             psd_tax, vsd_tax, pension_tax, gpm_tax, 
-            nett_earn, total_tax, total_tax_perc]
+            nett_earn, total_tax]
 
-            str_output = ['€{:.2f}'.format(x) for x in output]
-        return str_output
+            output = ['€{:.2f}'.format(x) for x in output]
+            output.append(str(total_tax_perc))
+        return output
     
     def useless(self):
         pass
@@ -82,6 +85,7 @@ class FileManager(BoxLayout):
             exit_manager=self.exit_manager,
             select_path=self.select_path,
             preview=False,
+            search='dirs',
         )
 
     def file_manager_open(self):
@@ -95,11 +99,21 @@ class FileManager(BoxLayout):
     def select_path(self, path):
         self.exit_manager()
         toast(path)
+
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
             pdf_paths['main_path'] = path
         with open('pdf_paths.json', 'w') as f:
             json.dump(pdf_paths, f, indent=2)
+
+        ## Updating hint_text label:
+        with open('pdf_paths.json', 'r') as f:
+            pdf_paths = json.load(f)
+            path = pdf_paths['main_path']
+
+        self.ids.path_label.hint_text = str(path)
+
+
 
     def exit_manager(self, *args):
         '''Called when the user reaches the root of the directory tree.'''
@@ -116,9 +130,10 @@ class FileManager(BoxLayout):
         return True
 
 class EarnWindow(Screen):
+
     ##Function to scan filesystem for Bolt Food (bf) and
     # Wolt (w) PDFs
-    def scan_fs():
+    def scan_fs(self):
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
 
@@ -158,9 +173,14 @@ class EarnWindow(Screen):
 
         with open('pdf_paths.json', 'w') as f:
             json.dump(pdf_paths, f, indent=2)
+        
+    
+
 
     ## Function to extract data from pdfs, save into db:
     def handle_pdf():
+        # pb = ProgressBar(max = 1000)
+        # self.ids.pb_container.add_widget(pb)
         conn = sqlite3.connect('pdf_data.db')
         c = conn.cursor()
 
@@ -197,11 +217,12 @@ class EarnWindow(Screen):
                 except ValueError:
                     cash = 0.0
 
-                earnings = earnings_no_cash + cash
+                earnings = round((earnings_no_cash + cash), 2)
                 meta_string = pdf_meta['CreationDate']
+                b_identifier = 'Bolt Food'
 
-                c.execute('INSERT INTO dated_earnings VALUES (?, ?, ?, ?)',
-                    (start_date_string, end_date_string, earnings, meta_string))
+                c.execute('INSERT INTO dated_earnings VALUES (?, ?, ?, ?, ?)',
+                    (b_identifier, start_date_string, end_date_string, earnings, meta_string))
 
             except sqlite3.IntegrityError:
                 continue
@@ -234,11 +255,15 @@ class EarnWindow(Screen):
                 w_earn_start_index = w_pdf_text.find('Suma (EUR)') + 11
                 w_earn_end_index = w_pdf_text.find('Suma (EUR)') + 17
                 w_earnings = float(w_pdf_text[w_earn_start_index:w_earn_end_index])
+                if w_earnings > 100:
+                    w_earn_end_index = w_pdf_text.find('Suma (EUR)') + 18
+                    w_earnings = float(w_pdf_text[w_earn_start_index:w_earn_end_index])
 
                 w_meta_string = w_pdf_meta['CreationDate']
+                w_identifier = 'Wolt'
 
-                c.execute('INSERT INTO dated_earnings VALUES (?, ?, ?, ?)',
-                    (w_start_date_string, w_end_date_string, w_earnings, w_meta_string))
+                c.execute('INSERT INTO dated_earnings VALUES (?, ?, ?, ?, ?)',
+                    (w_identifier, w_start_date_string, w_end_date_string, w_earnings, w_meta_string))
 
             except sqlite3.IntegrityError:
                 continue
@@ -246,12 +271,14 @@ class EarnWindow(Screen):
             conn.commit() 
         conn.close()
 
+ 
 
     def reset_db():
         conn = sqlite3.connect('pdf_data.db')
         c = conn.cursor()
         c.execute('''DROP TABLE IF EXISTS dated_earnings''')
         c.execute("""CREATE TABLE IF NOT EXISTS dated_earnings (
+            platform text,
             start_date text,
             end_date text,
             earnings real,
@@ -259,6 +286,59 @@ class EarnWindow(Screen):
         )""")
         conn.commit()
         conn.close()
+
+
+
+    def fetch_data():
+        conn = sqlite3.connect('pdf_data.db')
+        c = conn.cursor()
+        date_earn_obj = c.execute("""SELECT platform,
+        start_date,
+        end_date,
+        earnings
+        FROM dated_earnings""")
+        earn_data = date_earn_obj.fetchall()
+        return earn_data
+
+        
+
+    def show_smaller_table(self, data = fetch_data()):
+        container = self.ids.db_container
+        headerButtonPlatform = TableButton(text='Platforma')
+        headerButtonWeek = TableButton(text='Savaitė')
+        headerButtonEarn = TableButton(text='Uždarbis')
+        container.add_widget(headerButtonPlatform)
+        container.add_widget(headerButtonWeek)
+        container.add_widget(headerButtonEarn)
+        for row in data:
+            formatted_vals = []
+            platform = row[0]
+            earnings = row[3]
+            start_date = datetime.datetime.strptime(row[1], '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(row[2], '%Y-%m-%d')
+            wk_start = start_date.isocalendar()[1]
+            wk_end = end_date.isocalendar()[1]
+            
+            formatted_vals.append(platform)
+
+            if wk_start == wk_end:
+                formatted_vals.append(str(wk_start))
+            else:
+                week_nr_string = str(wk_start) + '-' + str(wk_end)
+                formatted_vals.append(week_nr_string)
+            
+            formatted_vals.append(earnings)
+            for val in formatted_vals:
+                tableButton = TableButton(text=str(val))
+                container.add_widget(tableButton)
+
+
+                
+                ## tableButton = TableButton(text=str(row[row.index(val)]))
+
+
+class TableButton(Button):
+    pass
 
 class StatWindow(Screen):
     pass
@@ -293,11 +373,17 @@ class SettWindow(Screen):
         with open('settings.json', 'w') as f:
             json.dump(settings, f, indent=2)
 
+class AboutWindow(Screen):
+    pass
+
 
 class WindowManager(ScreenManager):
     pass
 
 class TaxCalc(MDApp):
+    def build(self):
+        self.theme_cls.primary_palette = "Green"
+
     def get_sett():
         with open('settings.json') as f:
             settings = json.load(f)

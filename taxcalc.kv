@@ -10,6 +10,7 @@ WindowManager:
     EarnWindow:
     StatWindow:
     SettWindow:
+    AboutWindow:
 
 <MainWindow>:
     ## App's background color
@@ -28,8 +29,8 @@ WindowManager:
 
     FloatLayout:
         Image: ##App banner
-            id: 'main_banner'
-            source: './images/banner_small.png'
+            id: main_banner
+            source: './images/banner_small.png' if app.settings['language'] == 'en' else './images/banner_small_lt.png'
             size: self.texture_size
             pos_hint: {'center_x':0.5, 'center_y': 0.825}
             size_hint: (0.8, 0.8)
@@ -37,8 +38,8 @@ WindowManager:
         BoxLayout: #Button container with layout, size and spacing
             spacing: 10
             orientation: "vertical"
-            size_hint: 0.80, 0.5
-            pos_hint: {'center_x': .5, 'center_y': .425}
+            size_hint: 0.80, 0.575
+            pos_hint: {'center_x': .5, 'center_y': .4}
 
         ##Main window buttons:
 
@@ -68,6 +69,13 @@ WindowManager:
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'sett'
+            
+            StrokeButton: ##About button
+                font_size: (root.width + root.height) / 30
+                text: app.lang_data[0]['about']
+                font_name: 'DejaVuSans'
+                on_release:
+                    app.root.current = 'about'
 
 
 <CalcWindow>:
@@ -151,42 +159,84 @@ WindowManager:
             pos: self.pos
             size: self.size
 
-
-    BoxLayout:
+    GridLayout:
+        size_hint: 0.85, 0.5
         pos_hint: {'center_x': .5, 'center_y': .75}
-        size_hint: 0.85, 0.3
-        orientation: 'vertical'
+        cols: 1
+        spacing: [0,10]
 
-        Label:
-            halign: 'left'
-            text_size: self.size
-            text: 'Pasirinkite aplanką su Bolt/Wolt PDF dokumentais'
-        FileManager:
+        GridLayout:
+            cols: 1
+            id: pb_container
+            size_hint_y: 0.1 
 
 
-<FileManager>:
-    BoxLayout:
-        orientation: 'horizontal'
-        TextInput:
-            pos_hint: {'center_x': .5, 'center_y': 1}
-            size_hint: 0.8, 0.35
-            id: total_earnings
-            multiline: False
-            font_size: (root.width + root.height) / 30
-            hint_text: app.path['main_path']
-            hint_text_color: app.colors['hint_text']
-            input_filter: 'float'
-            disabled: True
+        BoxLayout:
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            size_hint: 1, 0.5
+            orientation: 'vertical'
 
-        MDIconButton:
-            halign: 'right'
-            text_size: self.size
-            icon: "folder"
-            icon_size: 0.5, 0.5
-            pos_hint: {'x': .5, 'y': .75}
-            theme_icon_color: "Custom"
-            icon_color: app.colors['btn_bg']
-            on_release: root.file_manager_open()
+            Label:
+                halign: 'left'
+                text_size: self.size
+                text: 'Pasirinkite aplanką su Bolt/Wolt PDF'
+                color: utils.get_color_from_hex(app.colors['font_black'])
+
+            FileManager:
+        
+        GridLayout:
+            cols: 2
+            spacing: [30,100]
+            row_force_default: True
+            row_default_height: self.height*0.2
+
+            StrokeButton:
+                font_size: (root.width + root.height) / 35
+                text: app.lang_data[2]['scan']
+                on_release:
+                #     root.scan_fs()
+                #     root.handle_pdf()
+                    root.show_smaller_table()
+            StrokeButton:
+                font_size: (root.width + root.height) / 35
+                text: app.lang_data[2]['back']
+                on_release:
+                    app.root.current = 'main'
+
+
+    
+        
+    GridLayout:
+        cols: 3
+        size_hint: 0.8, 0.5
+        pos_hint: {'center_x': .5, 'center_y': .4}
+        id: db_container
+
+
+<TableButton>:
+    background_color: (0,0,0,0)
+    background_normal: ''
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    ##Font color:
+    color: self.font_black_color if self.state == 'normal' else self.font_color_press
+    size: '30dp', '30dp'
+    size_hint_x: 0.5
+    size_hint_y: None
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 
 <StatWindow>:
@@ -349,6 +399,46 @@ WindowManager:
         on_release: Factory.PensionHelpPopup().open()
 
 
+
+<AboutWindow>:
+    ## App's background color
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex(app.colors['bg_main']) ## Background grey
+
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    name: "about"
+    size: root.size
+
+
+
+
+
+<FileManager>:
+    BoxLayout:
+        orientation: 'horizontal'
+        TextInput:
+            id: path_label
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            size_hint: 0.8, 0.7
+            multiline: False
+            font_size: (root.width + root.height) / 28
+            hint_text: app.path['main_path']
+            hint_text_color: app.colors['hint_text']
+            disabled: True
+
+        MDIconButton:
+            halign: 'right'
+            text_size: self.size
+            icon: "folder"
+            # icon_size: 0.5, 0.5
+            pos_hint: {'x': .5, 'y': .05}
+            on_release: root.file_manager_open()
+
+
 <Separator@Widget>:
     id: separator
     size_hint_y: None
@@ -361,7 +451,6 @@ WindowManager:
             size: separator.width, 2
 
 <StyledButton@Button>:
-    elevation: 10
     background_color: (0,0,0,0)
     background_normal: ''
     font_black_color: utils.get_color_from_hex(app.colors['font_black'])
@@ -518,57 +607,70 @@ WindowManager:
         Line:  
             rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
 
+<DataButtonLabel@DataButton>:
+    halign: 'left'
+    valign: 'middle'
+    text_size: self.size
+    padding_x: 20
+
+<DataButtonNumbers@DataButton>:
+    halign: 'right'
+    valign: 'middle'
+    text_size: self.size
+    padding_x: 20
+
+
 <CalculatedLayout>:
     pos: self.pos
     rows: 10
     cols: 2
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['income']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[0]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['profit']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[1]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['costs']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[2]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['psd']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[3]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['vsd']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[4]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['pension']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[5]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['gpm']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[6]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['net_earn']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[7]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['total_tax']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[8]
-    DataButton:
+    DataButtonLabel:
         text: app.lang_data[1]['tax_perc']
-    DataButton:
+    DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[9]
