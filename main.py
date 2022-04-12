@@ -1,4 +1,3 @@
-from multiprocessing import Manager
 from kivymd.uix.screen import Screen
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
@@ -9,7 +8,7 @@ from kivy.core.window import Window
 from kivymd.toast import toast
 from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.progressbar import ProgressBar
+from kivy.uix.behaviors import ToggleButtonBehavior
 import os
 import json
 import pdfplumber
@@ -321,6 +320,7 @@ class EarnWindow(Screen):
             header_container.add_widget(headerButtonWeek)
             header_container.add_widget(headerButtonEarn)
         for row in data:
+            counter = 0
             formatted_vals = []
             platform = row[0]
             earnings = row[3]
@@ -328,7 +328,7 @@ class EarnWindow(Screen):
             end_date = datetime.datetime.strptime(row[2], '%Y-%m-%d')
             wk_start = start_date.isocalendar()[1]
             wk_end = end_date.isocalendar()[1]
-            
+
             formatted_vals.append(platform)
 
             if wk_start == wk_end:
@@ -339,14 +339,39 @@ class EarnWindow(Screen):
             
             formatted_vals.append(earnings)
             for val in formatted_vals:
-                tableButton = TableButton(text=str(val))
-                container.add_widget(tableButton)
+                if counter == 0:
+                    tableButton = TableButton(text=str(val))
+                    container.add_widget(tableButton)
+                    counter += 1
+                elif counter == 1:
+                    tableButton = TableButtonDate(text=str(val), week = val,
+                    date = row[1] + ' -\n' + row[2])
+                    container.add_widget(tableButton)
+                    counter += 1
+                else:
+                    tableButton = TableButton(text=str(val))
+                    container.add_widget(tableButton)
+                    counter = 0
+
 
 
 
 
 class TableButton(Button):
     pass
+
+class TableButtonDate(TableButton, ToggleButtonBehavior):
+    def __init__(self, week, date, **kwargs):
+        super().__init__(**kwargs)
+        self.date = date
+        self.week = week
+    
+    def on_state(self, widget, value):
+            if value == 'down':
+                self.text = self.date
+            else:
+                self.text = self.week
+
 
 class StatWindow(Screen):
     pass
@@ -389,9 +414,6 @@ class WindowManager(ScreenManager):
     pass
 
 class TaxCalc(MDApp):
-    def build(self):
-        self.theme_cls.primary_palette = "Green"
-
     def get_sett(self):
         with open('settings.json') as f:
             settings = json.load(f)
@@ -419,6 +441,10 @@ class TaxCalc(MDApp):
 
     colors = get_col()
     path = get_path()
+
+    def build(self):
+        self.theme_cls.primary_palette = "Green"
+
 
 
 TaxCalc().run()

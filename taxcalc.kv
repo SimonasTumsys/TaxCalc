@@ -57,7 +57,6 @@ WindowManager:
                 on_release:
                     app.root.current = "earn"
                     app.root.get_screen('earn').show_smaller_table()
-
             
             StrokeButton: ##Statistics button
                 font_size: (root.width + root.height) / 30
@@ -201,10 +200,12 @@ WindowManager:
                     root.ids.db_header_container.clear_widgets()  
                     root.show_smaller_table()
                     
+                    
             StrokeButton:
                 font_size: (root.width + root.height) / 35
                 text: app.get_lang()[2]['back']
                 on_release:
+                    
                     root.ids.db_container.clear_widgets()
                     root.ids.db_header_container.clear_widgets()     
                     app.root.current = 'main'
@@ -237,6 +238,7 @@ WindowManager:
 
 
 <TableButton>:
+    font_size: (root.width + root.height) / 10
     background_color: (0,0,0,0)
     background_normal: ''
     font_black_color: utils.get_color_from_hex(app.colors['font_black'])
@@ -260,6 +262,10 @@ WindowManager:
             rgba: self.back_color_press or [0,0,0,0]
         Line:  
             rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+
+<TableButtonDate>:
+    font_size: (root.width + root.height) / 10
+    
 
 
 <StatWindow>:
@@ -441,6 +447,7 @@ WindowManager:
 
 
 <FileManager>:
+
     BoxLayout:
         orientation: 'horizontal'
         TextInput:
@@ -617,6 +624,7 @@ WindowManager:
     halign: 'center'
 
 <DataButton@StyledButton>:
+    font_size: (root.width + root.height) / 13.5
     canvas.before:
         Color:
             rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
@@ -634,13 +642,13 @@ WindowManager:
     halign: 'left'
     valign: 'middle'
     text_size: self.size
-    padding_x: 20
+    padding_x: 10
 
 <DataButtonNumbers@DataButton>:
     halign: 'right'
     valign: 'middle'
     text_size: self.size
-    padding_x: 20
+    padding_x: 10
 
 
 <CalculatedLayout>:
