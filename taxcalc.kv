@@ -1,4 +1,4 @@
-#:kivy 2.0.0
+#:kivy 2.2.0
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
@@ -265,7 +265,27 @@ WindowManager:
 
 <TableButtonDate>:
     font_size: (root.width + root.height) / 10
-    
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.colors['font_black']) ## Font Grey
+    ##Font color:
+    color: self.font_black_color
+    size: '30dp', '30dp'
+    size_hint_x: 0.5
+    size_hint_y: None
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
 
 
 <StatWindow>:
@@ -447,7 +467,6 @@ WindowManager:
 
 
 <FileManager>:
-
     BoxLayout:
         orientation: 'horizontal'
         TextInput:

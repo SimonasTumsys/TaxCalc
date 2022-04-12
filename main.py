@@ -14,7 +14,8 @@ import json
 import pdfplumber
 import datetime
 import sqlite3
-
+import kivymd
+import kivy
 
 
 class CalculatedLayout(GridLayout):
@@ -355,8 +356,6 @@ class EarnWindow(Screen):
 
 
 
-
-
 class TableButton(Button):
     pass
 
@@ -443,7 +442,7 @@ class TaxCalc(MDApp):
     path = get_path()
 
     def build(self):
-        self.theme_cls.primary_palette = "Green"
+        self.theme_cls.primary_palette = 'Green'
 
 
 
