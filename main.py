@@ -27,7 +27,7 @@ class CalcWindow(Screen):
         calcLayout = CalculatedLayout()
         self.ids.calc_container.add_widget(calcLayout)
         
-    with open('settings.json', 'r') as f:
+    with open('app_settings.json', 'r') as f:
         settings = json.load(f)
 
     def calculate(self, settings = settings):
@@ -375,7 +375,7 @@ class StatWindow(Screen):
 
 class SettWindow(Screen):
     def save_settings(self):
-        with open('settings.json', 'r') as f:
+        with open('app_', 'r') as f:
             settings = json.load(f)
 
         if self.ids.lng_button_lt.state == 'down':
@@ -400,12 +400,12 @@ class SettWindow(Screen):
         else:
             settings['pension'] = 3
 
-        with open('settings.json', 'w') as f:
+        with open('app_', 'w') as f:
             json.dump(settings, f, indent=2)
+
 
 class AboutWindow(Screen):
     pass
-
 
 class WindowManager(ScreenManager):
     pass
@@ -413,14 +413,15 @@ class WindowManager(ScreenManager):
 class TaxCalc(MDApp):
     def build(self):
         self.theme_cls.primary_palette = "Green"
+        self.theme_cls.primary_hue = "500"
 
     def get_sett():
-        with open('settings.json') as f:
+        with open('app_settings.json') as f:
             settings = json.load(f)
         return settings
     
     def get_col():
-        with open('colors.json') as f:
+        with open('app_colors.json') as f:
             colors = json.load(f)
             return colors
 
