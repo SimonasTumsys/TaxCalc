@@ -7,15 +7,13 @@ from kivymd.uix.filemanager import MDFileManager
 from kivy.core.window import Window
 from kivymd.toast import toast
 from kivy.uix.button import Button
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.behaviors import ToggleButtonBehavior
 import os
 import json
 import pdfplumber
 import datetime
 import sqlite3
-import kivymd
-import kivy
+
 
 
 class CalculatedLayout(GridLayout):
@@ -296,7 +294,7 @@ class EarnWindow(Screen):
         start_date,
         end_date,
         earnings
-        FROM dated_earnings""")
+        FROM dated_earnings ORDER BY start_date""")
         earn_data = date_earn_obj.fetchall()
         conn.close()
         return earn_data
@@ -418,12 +416,12 @@ class TaxCalc(MDApp):
             settings = json.load(f)
         return settings
     
-    def get_col():
+    def get_col(self):
         with open('colors.json') as f:
             colors = json.load(f)
             return colors
 
-    def get_path():
+    def get_path(self):
         with open('pdf_paths.json') as f:
             path = json.load(f)
             return path
@@ -438,8 +436,6 @@ class TaxCalc(MDApp):
     # def build(self):
     #     self.icon = 'temp_icon.jpg'
 
-    colors = get_col()
-    path = get_path()
 
     def build(self):
         self.theme_cls.primary_palette = 'Green'

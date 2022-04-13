@@ -16,7 +16,7 @@ WindowManager:
     ## App's background color
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex(app.colors['bg_main']) ## Background grey
+            rgba: utils.get_color_from_hex(app.get_col()['bg_main']) ## Background grey
 
         Rectangle:
             pos: self.pos
@@ -83,7 +83,7 @@ WindowManager:
 
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex(app.colors['bg_main'])
+            rgba: utils.get_color_from_hex(app.get_col()['bg_main'])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -101,7 +101,7 @@ WindowManager:
             multiline: False
             font_size: (root.width + root.height) / 55
             hint_text: app.get_lang()[1]['input_ph']
-            hint_text_color: app.colors['hint_text']
+            hint_text_color: app.get_col()['hint_text']
             input_filter: 'float'
 
         TextInput:
@@ -112,7 +112,7 @@ WindowManager:
             multiline: False
             font_size: (root.width + root.height) / 55
             hint_text: app.get_lang()[1]['cost_ph'] if app.get_sett()['spend_30_percent'] == False else app.get_lang()[1]['auto_cost']
-            hint_text_color: app.colors['hint_text']
+            hint_text_color: app.get_col()['hint_text']
             input_filter: 'float'
             disabled: True if app.get_sett()['spend_30_percent'] == True else False
 
@@ -154,7 +154,7 @@ WindowManager:
     
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex(app.colors['bg_main'])
+            rgba: utils.get_color_from_hex(app.get_col()['bg_main'])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -180,7 +180,7 @@ WindowManager:
                 halign: 'left'
                 text_size: self.size
                 text: 'Pasirinkite aplanką su Bolt/Wolt PDF'
-                color: utils.get_color_from_hex(app.colors['font_black'])
+                color: utils.get_color_from_hex(app.get_col()['font_black'])
 
             FileManager:
         
@@ -241,10 +241,10 @@ WindowManager:
     font_size: (root.width + root.height) / 10
     background_color: (0,0,0,0)
     background_normal: ''
-    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
-    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
-    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
-    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    font_black_color: utils.get_color_from_hex(app.get_col()['font_black'])
+    back_color: utils.get_color_from_hex(app.get_col()['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.get_col()['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.get_col()['font']) ## Font Grey
     ##Font color:
     color: self.font_black_color if self.state == 'normal' else self.font_color_press
     size: '30dp', '30dp'
@@ -265,10 +265,10 @@ WindowManager:
 
 <TableButtonDate>:
     font_size: (root.width + root.height) / 10
-    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
-    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
-    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
-    font_color_press: utils.get_color_from_hex(app.colors['font_black']) ## Font Grey
+    font_black_color: utils.get_color_from_hex(app.get_col()['font_black'])
+    back_color: utils.get_color_from_hex(app.get_col()['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.get_col()['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.get_col()['font_black']) ## Font Grey
     ##Font color:
     color: self.font_black_color
     size: '30dp', '30dp'
@@ -296,7 +296,7 @@ WindowManager:
 
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex(app.colors['bg_main'])
+            rgba: utils.get_color_from_hex(app.get_col()['bg_main'])
         Rectangle:
             pos: self.pos
             size: self.size
@@ -453,7 +453,7 @@ WindowManager:
     ## App's background color
     canvas.before:
         Color:
-            rgba: utils.get_color_from_hex(app.colors['bg_main']) ## Background grey
+            rgba: utils.get_color_from_hex(app.get_col()['bg_main']) ## Background grey
 
         Rectangle:
             pos: self.pos
@@ -461,9 +461,6 @@ WindowManager:
 
     name: "about"
     size: root.size
-
-
-
 
 
 <FileManager>:
@@ -475,8 +472,8 @@ WindowManager:
             size_hint: 0.8, 0.7
             multiline: False
             font_size: (root.width + root.height) / 28
-            hint_text: app.path['main_path']
-            hint_text_color: app.colors['hint_text']
+            hint_text: app.get_path()['main_path']
+            hint_text_color: app.get_col()['hint_text']
             disabled: True
 
         MDIconButton:
@@ -502,10 +499,10 @@ WindowManager:
 <StyledButton@Button>:
     background_color: (0,0,0,0)
     background_normal: ''
-    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
-    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
-    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
-    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    font_black_color: utils.get_color_from_hex(app.get_col()['font_black'])
+    back_color: utils.get_color_from_hex(app.get_col()['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.get_col()['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.get_col()['font']) ## Font Grey
     ##Font color:
     color: self.font_black_color if self.state == 'normal' else self.font_color_press
 
@@ -531,10 +528,10 @@ WindowManager:
     font_size: (root.width + root.height) / 8
     background_color: (0,0,0,0)
     background_normal: ''
-    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
-    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## Grey
-    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Black
-    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    font_black_color: utils.get_color_from_hex(app.get_col()['font_black'])
+    back_color: utils.get_color_from_hex(app.get_col()['btn_bg']) ## Grey
+    back_color_press: utils.get_color_from_hex(app.get_col()['btn_side']) ## Black
+    font_color_press: utils.get_color_from_hex(app.get_col()['font']) ## Font Grey
     size_hint: (0.25, 0.5)
     pos_hint: {'center_x': 0.5, 'center_y': 0.5}
     allow_no_selection: False
@@ -565,9 +562,9 @@ WindowManager:
 <HelpPopup@Popup>:
     size_hint: (0.8, 0.6)
     pos_hint: {'center_x': 0.5, 'center_y': 0.6}
-    separator_color: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    separator_color: utils.get_color_from_hex(app.get_col()['font']) ## Font Grey
     separator_height: '1dp'
-    title_color: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    title_color: utils.get_color_from_hex(app.get_col()['font']) ## Font Grey
     title_align: 'center'
     title_size: (root.width + root.height) / 32
     #background_color: utils.get_color_from_hex('#242725')
@@ -606,7 +603,7 @@ WindowManager:
         Label:
             text: app.get_lang()[4]['take_effect']
             font_size: (root.width + root.height) / 35
-            color: utils.get_color_from_hex(app.colors['font'])
+            color: utils.get_color_from_hex(app.get_col()['font'])
             valign: 'middle'
             halign: 'center'
             text_size: self.size
@@ -635,11 +632,11 @@ WindowManager:
     halign: 'center'
     font_size: (root.width + root.height) / 45
     text_size: self.size
-    color: utils.get_color_from_hex(app.colors['font'])
+    color: utils.get_color_from_hex(app.get_col()['font'])
 
 <SettingsLabel@Label>:
     font_size: (root.width + root.height) / 13
-    color: utils.get_color_from_hex(app.colors['font_black'])
+    color: utils.get_color_from_hex(app.get_col()['font_black'])
     halign: 'center'
 
 <DataButton@StyledButton>:
