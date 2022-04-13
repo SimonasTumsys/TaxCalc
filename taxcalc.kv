@@ -30,7 +30,7 @@ WindowManager:
     FloatLayout:
         Image: ##App banner
             id: main_banner
-            source: './images/banner_small.png' if app.get_sett()['language'] == 'en' else './images/banner_small_lt.png'
+            source: './images/banner_small.png' if app.settings['language'] == 'en' else './images/banner_small_lt.png'
             size: self.texture_size
             pos_hint: {'center_x':0.5, 'center_y': 0.825}
             size_hint: (0.8, 0.8)
@@ -111,10 +111,10 @@ WindowManager:
             background_color: 1,1,1,1
             multiline: False
             font_size: (root.width + root.height) / 55
-            hint_text: app.get_lang()[1]['cost_ph'] if app.get_sett()['spend_30_percent'] == False else app.get_lang()[1]['auto_cost']
+            hint_text: app.get_lang()[1]['cost_ph'] if app.settings['spend_30_percent'] == False else app.get_lang()[1]['auto_cost']
             hint_text_color: app.colors['hint_text']
             input_filter: 'float'
-            disabled: True if app.get_sett()['spend_30_percent'] == True else False
+            disabled: True if app.settings['spend_30_percent'] == True else False
 
         
         GridLayout:
@@ -322,13 +322,13 @@ WindowManager:
                     id: lng_button_lt
                     text: 'Lietuvių'
                     group: 'lng'
-                    state: 'down' if app.get_sett()['language'] == 'lt' else 'normal'
+                    state: 'down' if app.settings['language'] == 'lt' else 'normal'
                     
                 SettingsToggleButton:
                     id: lng_button_en
                     text: 'English'
                     group: 'lng'
-                    state: 'down' if app.get_sett()['language'] == 'en' else 'normal'
+                    state: 'down' if app.settings['language'] == 'en' else 'normal'
 
         Separator:
 
@@ -347,12 +347,12 @@ WindowManager:
                     id: psd_button_true
                     text: app.get_lang()[4]['yes']
                     group: 'psd'
-                    state: 'down' if app.get_sett()['psd_fixed'] == True else 'normal'
+                    state: 'down' if app.settings['psd_fixed'] == True else 'normal'
                 SettingsToggleButton:
                     id: psd_button_false
                     text: app.get_lang()[4]['no']
                     group: 'psd'
-                    state: 'down' if app.get_sett()['psd_fixed'] == False else 'normal'
+                    state: 'down' if app.settings['psd_fixed'] == False else 'normal'
 
         Separator:
 
@@ -373,12 +373,12 @@ WindowManager:
                     id: spend_button_true
                     text: app.get_lang()[4]['yes']
                     group: 'spend'
-                    state: 'down' if app.get_sett()['spend_30_percent'] == True else 'normal'
+                    state: 'down' if app.settings['spend_30_percent'] == True else 'normal'
                 SettingsToggleButton:
                     id: spend_button_false
                     text: app.get_lang()[4]['no']
                     group: 'spend'
-                    state: 'down' if app.get_sett()['spend_30_percent'] == False else 'normal'
+                    state: 'down' if app.settings['spend_30_percent'] == False else 'normal'
 
 
         Separator:
@@ -399,17 +399,17 @@ WindowManager:
                     id: pension0
                     text: '0'
                     group: 'pension'
-                    state: 'down' if app.get_sett()['pension'] == 0 else 'normal'
+                    state: 'down' if app.settings['pension'] == 0 else 'normal'
                 SettingsToggleButton:
                     id: pension27
                     text: '2.7%'
                     group: 'pension'
-                    state: 'down' if app.get_sett()['pension'] == 2.7 else 'normal'
+                    state: 'down' if app.settings['pension'] == 2.7 else 'normal'
                 SettingsToggleButton:
                     id: pension3
                     text: '3%'
                     group: 'pension'
-                    state: 'down' if app.get_sett()['pension'] == 3 else 'normal'
+                    state: 'down' if app.settings['pension'] == 3 else 'normal'
                     
         Separator:
 
@@ -463,9 +463,6 @@ WindowManager:
     size: root.size
 
 
-
-
-
 <FileManager>:
     BoxLayout:
         orientation: 'horizontal'
@@ -480,7 +477,7 @@ WindowManager:
             disabled: True
 
         MDIconButton:
-            halign: 'right'
+            halign: 'center'
             text_size: self.size
             icon: "folder"
             # icon_size: 0.5, 0.5

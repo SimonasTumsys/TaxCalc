@@ -7,15 +7,13 @@ from kivymd.uix.filemanager import MDFileManager
 from kivy.core.window import Window
 from kivymd.toast import toast
 from kivy.uix.button import Button
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.behaviors import ToggleButtonBehavior
 import os
 import json
 import pdfplumber
 import datetime
 import sqlite3
-import kivymd
-import kivy
+
 
 
 class CalculatedLayout(GridLayout):
@@ -29,7 +27,7 @@ class CalcWindow(Screen):
         calcLayout = CalculatedLayout()
         self.ids.calc_container.add_widget(calcLayout)
         
-    with open('settings.json', 'r') as f:
+    with open('app_settings.json', 'r') as f:
         settings = json.load(f)
 
     def calculate(self, settings = settings):
@@ -296,7 +294,7 @@ class EarnWindow(Screen):
         start_date,
         end_date,
         earnings
-        FROM dated_earnings""")
+        FROM dated_earnings ORDER BY start_date""")
         earn_data = date_earn_obj.fetchall()
         conn.close()
         return earn_data
@@ -377,7 +375,7 @@ class StatWindow(Screen):
 
 class SettWindow(Screen):
     def save_settings(self):
-        with open('settings.json', 'r') as f:
+        with open('app_', 'r') as f:
             settings = json.load(f)
 
         if self.ids.lng_button_lt.state == 'down':
@@ -402,28 +400,37 @@ class SettWindow(Screen):
         else:
             settings['pension'] = 3
 
-        with open('settings.json', 'w') as f:
+        with open('app_', 'w') as f:
             json.dump(settings, f, indent=2)
+
 
 class AboutWindow(Screen):
     pass
-
 
 class WindowManager(ScreenManager):
     pass
 
 class TaxCalc(MDApp):
+<<<<<<< HEAD
 
     def build(self):
         self.theme_cls.primary_palette = 'Green'
 
     def get_sett(self):
         with open('settings.json') as f:
+=======
+    def build(self):
+        self.theme_cls.primary_palette = "Green"
+        self.theme_cls.primary_hue = "500"
+
+    def get_sett():
+        with open('app_settings.json') as f:
+>>>>>>> b4dcf2a7104276ae834d262d6cfff5dfa4770df1
             settings = json.load(f)
         return settings
     
     def get_col():
-        with open('colors.json') as f:
+        with open('app_colors.json') as f:
             colors = json.load(f)
             return colors
 
@@ -432,16 +439,29 @@ class TaxCalc(MDApp):
             path = json.load(f)
             return path
     
-    def get_lang(self):
-        lang = TaxCalc().get_sett()['language']
+    def get_lang(self, lang = get_sett()['language']):
         with open('language.json', encoding='utf-8') as f:
             lang_data = json.load(f)
             lang_data = lang_data[lang]
         return lang_data
     
+<<<<<<< HEAD
     colors = get_col()
     path = get_path()
 
+=======
+    # def build(self):
+    #     self.icon = 'temp_icon.jpg'
+
+
+    # lang_data = get_lang()
+    settings = get_sett()
+    colors = get_col()
+    path = get_path()
+
+
+
+>>>>>>> b4dcf2a7104276ae834d262d6cfff5dfa4770df1
 TaxCalc().run()
 
 
