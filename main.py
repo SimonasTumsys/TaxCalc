@@ -411,23 +411,25 @@ class WindowManager(ScreenManager):
     pass
 
 class TaxCalc(MDApp):
-    def get_sett(self):
+    def build(self):
+        self.theme_cls.primary_palette = "Green"
+
+    def get_sett():
         with open('settings.json') as f:
             settings = json.load(f)
         return settings
     
-    def get_col(self):
+    def get_col():
         with open('colors.json') as f:
             colors = json.load(f)
             return colors
 
-    def get_path(self):
+    def get_path():
         with open('pdf_paths.json') as f:
             path = json.load(f)
             return path
     
-    def get_lang(self):
-        lang = TaxCalc().get_sett()['language']
+    def get_lang(self, lang = get_sett()['language']):
         with open('language.json', encoding='utf-8') as f:
             lang_data = json.load(f)
             lang_data = lang_data[lang]
@@ -437,8 +439,10 @@ class TaxCalc(MDApp):
     #     self.icon = 'temp_icon.jpg'
 
 
-    def build(self):
-        self.theme_cls.primary_palette = 'Green'
+    # lang_data = get_lang()
+    settings = get_sett()
+    colors = get_col()
+    path = get_path()
 
 
 
