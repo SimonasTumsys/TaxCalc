@@ -411,21 +411,12 @@ class WindowManager(ScreenManager):
     pass
 
 class TaxCalc(MDApp):
-<<<<<<< HEAD
-
-    def build(self):
-        self.theme_cls.primary_palette = 'Green'
-
-    def get_sett(self):
-        with open('settings.json') as f:
-=======
     def build(self):
         self.theme_cls.primary_palette = "Green"
-        self.theme_cls.primary_hue = "500"
+
 
     def get_sett():
         with open('app_settings.json') as f:
->>>>>>> b4dcf2a7104276ae834d262d6cfff5dfa4770df1
             settings = json.load(f)
         return settings
     
@@ -445,11 +436,6 @@ class TaxCalc(MDApp):
             lang_data = lang_data[lang]
         return lang_data
     
-<<<<<<< HEAD
-    colors = get_col()
-    path = get_path()
-
-=======
     # def build(self):
     #     self.icon = 'temp_icon.jpg'
 
@@ -461,7 +447,6 @@ class TaxCalc(MDApp):
 
 
 
->>>>>>> b4dcf2a7104276ae834d262d6cfff5dfa4770df1
 TaxCalc().run()
 
 
