@@ -2,6 +2,7 @@
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
+#:import Calendar calendar.Calendar
 
 WindowManager:
     transition: NoTransition()
@@ -62,6 +63,8 @@ WindowManager:
                 font_size: (root.width + root.height) / 30
                 text: app.get_lang()[0]['stats']
                 font_name: 'DejaVuSans'
+                on_release:
+                    app.root.current = 'stat'
                 
             StrokeButton: ##Settings button
                 font_size: (root.width + root.height) / 30
@@ -205,7 +208,6 @@ WindowManager:
                 font_size: (root.width + root.height) / 35
                 text: app.get_lang()[2]['back']
                 on_release:
-                    
                     root.ids.db_container.clear_widgets()
                     root.ids.db_header_container.clear_widgets()     
                     app.root.current = 'main'
@@ -237,59 +239,102 @@ WindowManager:
             id: db_container
 
 
-<TableButton>:
-    font_size: (root.width + root.height) / 10
-    background_color: (0,0,0,0)
-    background_normal: ''
-    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
-    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
-    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
-    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
-    ##Font color:
-    color: self.font_black_color if self.state == 'normal' else self.font_color_press
-    size: '30dp', '30dp'
-    size_hint_x: 0.5
-    size_hint_y: None
-    canvas.before:
-        Color:
-            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
-        Rectangle:
-            size: self.size
-            pos: self.pos
-        ##Line around button:
-    canvas.after:
-        Color:
-            rgba: self.back_color_press or [0,0,0,0]
-        Line:  
-            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
-
-<TableButtonDate>:
-    font_size: (root.width + root.height) / 10
-    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
-    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
-    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
-    font_color_press: utils.get_color_from_hex(app.colors['font_black']) ## Font Grey
-    ##Font color:
-    color: self.font_black_color
-    size: '30dp', '30dp'
-    size_hint_x: 0.5
-    size_hint_y: None
-    canvas.before:
-        Color:
-            rgba: self.back_color or [0,0,0,0] 
-        Rectangle:
-            size: self.size
-            pos: self.pos
-        ##Line around button:
-    canvas.after:
-        Color:
-            rgba: self.back_color_press or [0,0,0,0]
-        Line:  
-            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
-
 
 <StatWindow>:
     name: "stat"
+
+
+    canvas.before:
+        Color:
+            rgba: utils.get_color_from_hex(app.colors['bg_main'])
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    GridLayout:
+        size_hint: (1, 0.2)
+        pos_hint: {'center_x': .5, 'center_y': .875}
+        cols: 1
+        rows: 8
+        StatLabel:
+            text_size: self.size
+            halign: 'left'
+            text: "Failai duomenų bazėje: "
+        Separator:
+        StatLabel:
+            text: "Anksčiausias failas duomenų bazėje: "
+        Separator:
+        StatLabel:
+            text: "Vėliausias failas duomenų bazėje: "
+        Separator:
+        StatLabel:
+            text: "Iš viso failų duomenų bazėje: "
+        Separator:
+    
+    GridLayout:
+        size_hint: 0.85, 0.07
+        pos_hint: {'center_x': .5, 'center_y': 0.7}
+        cols: 2
+        spacing: [30,100]
+        # row_force_default: True
+        # row_default_height: self.height*0.5
+        StrokeButton:
+            font_size: (root.width + root.height) / 40
+            text: app.get_lang()[3]['open']
+            on_release: root.show_date_picker()
+
+        StrokeButton:
+            font_size: (root.width + root.height) / 40
+            text: app.get_lang()[3]['back']
+            on_release:
+                app.root.current = "main"
+
+
+    GridLayout:
+        size_hint_x: 0.5
+        cols: 3
+        rows: 1
+        id: platform_toggle_container
+        pos_hint: {'center_x': .6, 'center_y': .56}
+        size_hint_y: 0.1
+
+    GridLayout:
+        cols: 1
+        id: main_stat_container
+        size_hint_x: 0.8
+        size_hint_y: 0.2
+        pos_hint: {'center_x': .5, 'center_y': .45}
+
+
+<StatLabel@Label>:
+    text_size: self.size
+    color: 
+    halign: 'left'
+    valign: 'center'
+    padding_x: 30
+    color: utils.get_color_from_hex(app.colors['font_black'])
+
+<TogglableStatLayout@GridLayout>:
+    cols: 1
+    rows: 2
+    GridLayout:
+        cols: 1
+        size_hint: (1, 0.33)
+        DataButtonDate:
+            id: date_button
+    
+    GridLayout:
+        size_hint: (1, 0.66)
+        rows: 2
+        cols: 2
+        DataButton:
+            text: app.get_lang()[3]['earnings']
+        DataButton:
+            id: earn_button
+        DataButton:
+            text: app.get_lang()[3]['tax']
+        DataButton:
+            id: tax_button
 
 <SettWindow>:
     name: "sett"
@@ -413,6 +458,32 @@ WindowManager:
                     
         Separator:
 
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 5
+            padding: [0,0,30,0]
+
+            ##SSI relief setting label and button
+            SettingsLabel:
+                text: app.get_lang()[4]['vsd_l']
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 5
+                SettingsToggleButton:
+                    id: vsd_l_button_yes
+                    text: app.get_lang()[4]['yes']
+                    group: 'vsd_l'
+                    state: 'down' if app.settings['language'] == 'lt' else 'normal'
+                    
+                SettingsToggleButton:
+                    id: vsd_l_button_no
+                    text: app.get_lang()[4]['no']
+                    group: 'vsd_l'
+                    state: 'down' if app.settings['language'] == 'en' else 'normal'
+
+        Separator:
+    
+
         GridLayout:
             cols: 2
             spacing: [30,100]
@@ -430,22 +501,28 @@ WindowManager:
                 text: app.get_lang()[4]['cancel']
                 on_release: 
                     app.root.current = "main"
-    
+
+
 
     HelpButton:
-        pos_hint: {'x':0.013, 'y':0.775}
+        pos_hint: {'x':0.013, 'y':0.8}
         id: psd_help_button
         on_release: Factory.PSDHelpPopup().open()
 
     HelpButton:
-        pos_hint: {'x':0.013, 'y':0.57}
+        pos_hint: {'x':0.013, 'y':0.634}
         id: spending_help_button
         on_release: Factory.SpendHelpPopup().open()
 
     HelpButton:
-        pos_hint: {'x':0.013, 'y':0.364}
+        pos_hint: {'x':0.013, 'y':0.468}
         id: pension_help_button
         on_release: Factory.PensionHelpPopup().open()
+
+    HelpButton:
+        pos_hint: {'x':0.013, 'y':0.302}
+        id: vsd_l_help_button
+        on_release: Factory.VSDLHelpPopup().open()        
 
 
 
@@ -488,13 +565,13 @@ WindowManager:
 <Separator@Widget>:
     id: separator
     size_hint_y: None
-    height: 6
+    height: 1
     canvas:
         Color:
             rgb: 0., 0., 0.
         Rectangle:
             pos: 0, separator.center_y
-            size: separator.width, 2
+            size: root.width, 2
 
 <StyledButton@Button>:
     background_color: (0,0,0,0)
@@ -590,6 +667,13 @@ WindowManager:
         orientation: 'vertical'
         PopupLabel:
             text: app.get_lang()[4]['pension_help']
+
+<VSDLHelpPopup@HelpPopup>:
+    title: app.get_lang()[4]['vsd_l']
+    BoxLayout:
+        orientation: 'vertical'
+        PopupLabel:
+            text: app.get_lang()[4]['vsd_l_help']
 
 <TakeEffectPopup@Popup>:
     size_hint: (0.8, 0.25)
@@ -721,3 +805,112 @@ WindowManager:
     DataButtonNumbers:
         text:
             app.root.get_screen('calc').calculate()[9]
+
+<TableButton>:
+    font_size: (root.width + root.height) / 10
+    background_color: (0,0,0,0)
+    background_normal: ''
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    ##Font color:
+    color: self.font_black_color if self.state == 'normal' else self.font_color_press
+    size: '30dp', '30dp'
+    size_hint_x: 0.5
+    size_hint_y: None
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+
+
+<PlatformButton@TableButton>:
+    font_size: (root.width + root.height) / 7
+    background_color: (0,0,0,0)
+    background_normal: ''
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    ##Font color:
+    color: self.font_black_color if self.state == 'normal' else self.font_color_press
+    size: '30dp', '30dp'
+    size_hint_x: 0.5
+    size_hint_y: None
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+
+<PlatformButtonWolt@TableButton>:
+    font_size: (root.width + root.height) / 7
+    background_color: (0,0,0,0)
+    background_normal: ''
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    ##Font color:
+    color: self.font_black_color if self.state == 'normal' else self.font_color_press
+    size: '30dp', '30dp'
+    size_hint_x: 0.5
+    size_hint_y: None
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+
+
+
+<TableButtonDateWeek>:
+    font_size: (root.width + root.height) / 10
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.colors['font_black']) ## Font Grey
+    ##Font color:
+    color: self.font_black_color
+    size: '30dp', '30dp'
+    size_hint_x: 0.5
+    size_hint_y: None
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] 
+        Rectangle:
+            size: self.size
+            pos: self.pos
+        ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+
+
+<DataButtonDate@DataButton>:
+    font_size: (root.width + root.height) / 20

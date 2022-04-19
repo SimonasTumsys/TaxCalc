@@ -1,3 +1,4 @@
+from this import d
 from kivymd.uix.screen import Screen
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
@@ -8,13 +9,13 @@ from kivy.core.window import Window
 from kivymd.toast import toast
 from kivy.uix.button import Button
 from kivy.uix.behaviors import ToggleButtonBehavior
+from kivymd.uix.pickers import MDDatePicker
+from kivy.utils import get_color_from_hex
 import os
 import json
 import pdfplumber
 import datetime
 import sqlite3
-
-
 
 class CalculatedLayout(GridLayout):
     pass
@@ -35,12 +36,12 @@ class CalcWindow(Screen):
         vsd_rate = 0.1252
         pension_rate = float(settings['pension'])
 
-        if self.ids.total_earnings.text is not '':
+        if self.ids.total_earnings.text != '':
             total_earn = float(self.ids.total_earnings.text)
             if settings['spend_30_percent'] == True:
                 total_costs = total_earn*0.3
             else:
-                if self.ids.costs.text is not '':
+                if self.ids.costs.text != '':
                     total_costs = float(self.ids.costs.text)                
 
             profit = total_earn - total_costs
@@ -85,6 +86,7 @@ class FileManager(BoxLayout):
             select_path=self.select_path,
             preview=False,
             search='dirs',
+            background_origin='Green',
         )
 
     def file_manager_open(self):
@@ -318,46 +320,46 @@ class EarnWindow(Screen):
             header_container.add_widget(headerButtonPlatform)
             header_container.add_widget(headerButtonWeek)
             header_container.add_widget(headerButtonEarn)
-        for row in data:
-            counter = 0
-            formatted_vals = []
-            platform = row[0]
-            earnings = row[3]
-            start_date = datetime.datetime.strptime(row[1], '%Y-%m-%d')
-            end_date = datetime.datetime.strptime(row[2], '%Y-%m-%d')
-            wk_start = start_date.isocalendar()[1]
-            wk_end = end_date.isocalendar()[1]
+            for row in data:
+                counter = 0
+                formatted_vals = []
+                platform = row[0]
+                earnings = row[3]
+                start_date = datetime.datetime.strptime(row[1], '%Y-%m-%d')
+                end_date = datetime.datetime.strptime(row[2], '%Y-%m-%d')
+                wk_start = start_date.isocalendar()[1]
+                wk_end = end_date.isocalendar()[1]
 
-            formatted_vals.append(platform)
+                formatted_vals.append(platform)
 
-            if wk_start == wk_end:
-                formatted_vals.append(str(wk_start))
-            else:
-                week_nr_string = str(wk_start) + '-' + str(wk_end)
-                formatted_vals.append(week_nr_string)
-            
-            formatted_vals.append(earnings)
-            for val in formatted_vals:
-                if counter == 0:
-                    tableButton = TableButton(text=str(val))
-                    container.add_widget(tableButton)
-                    counter += 1
-                elif counter == 1:
-                    tableButton = TableButtonDate(text=str(val), week = val,
-                    date = row[1] + ' -\n' + row[2])
-                    container.add_widget(tableButton)
-                    counter += 1
+                if wk_start == wk_end:
+                    formatted_vals.append(str(wk_start))
                 else:
-                    tableButton = TableButton(text=str(val))
-                    container.add_widget(tableButton)
-                    counter = 0
+                    week_nr_string = str(wk_start) + '-' + str(wk_end)
+                    formatted_vals.append(week_nr_string)
+                
+                formatted_vals.append(earnings)
+                for val in formatted_vals:
+                    if counter == 0:
+                        tableButton = TableButton(text=str(val))
+                        container.add_widget(tableButton)
+                        counter += 1
+                    elif counter == 1:
+                        tableButton = TableButtonDateWeek(text=str(val), week = val,
+                        date = row[1] + ' -\n' + row[2])
+                        container.add_widget(tableButton)
+                        counter += 1
+                    else:
+                        tableButton = TableButton(text=str(val))
+                        container.add_widget(tableButton)
+                        counter = 0
 
 
 
 class TableButton(Button):
     pass
 
-class TableButtonDate(TableButton, ToggleButtonBehavior):
+class TableButtonDateWeek(TableButton, ToggleButtonBehavior):
     def __init__(self, week, date, **kwargs):
         super().__init__(**kwargs)
         self.date = date
@@ -369,9 +371,70 @@ class TableButtonDate(TableButton, ToggleButtonBehavior):
             else:
                 self.text = self.week
 
-
 class StatWindow(Screen):
-    pass
+    def on_save(self, instance, value, date_range):
+        self.ids.platform_toggle_container.clear_widgets()
+        self.ids.main_stat_container.clear_widgets()
+        try:
+            start_date = date_range[0]
+            end_date = date_range[-1]
+            data = EarnWindow().fetch_data()
+            if data != []:
+                togglableStatLayout = TogglableStatLayout(data, date_range)
+                self.ids.main_stat_container.add_widget(togglableStatLayout)
+                self.ids.platform_toggle_container.add_widget(PlatformButton(
+                    type='bolt',text='[b]Bolt[/b]'))
+                self.ids.platform_toggle_container.add_widget(PlatformButton(
+                    type='wolt',text='[b]Wolt[/b]'))
+                self.ids.platform_toggle_container.add_widget(PlatformButton(
+                    type='all',text='[b]All[/b]'))
+                
+        except IndexError:
+            toast("Try another date")
+
+    def on_cancel(self, instance, value):
+        '''Events called when the "CANCEL" dialog box button is clicked.'''
+
+    def show_date_picker(self):
+        date_dialog = MDDatePicker(mode='range')
+        date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
+        date_dialog.open()
+
+class PlatformButton(TableButton, ToggleButtonBehavior):
+    def __init__(self, type, text, **kwargs):
+        super().__init__(**kwargs)
+        self.group = 'platform'
+        self.type = type
+        self.text = text
+        self.markup = True
+        if type == 'all':
+            self.state = 'down'
+    
+    def on_state(self, widget, value):
+        pass
+
+class TogglableStatLayout(GridLayout):
+    def __init__(self, data, date_range, **kwargs):
+        super().__init__(**kwargs)
+        date_button = self.ids.date_button
+        earn_button = self.ids.earn_button
+        tax_button = self.ids.tax_button
+
+        earnings = 0
+        start_date = date_range[0]
+        end_date = date_range[-1]
+
+        for row in data:
+            start_date_db = datetime.datetime.strptime(row[1], '%Y-%m-%d').date()
+            end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date()
+
+            if start_date <= start_date_db and end_date >= end_date_db:
+                earnings += row[3]
+
+        date_button.text = str(start_date) + ' - ' + str(end_date)
+        earn_button.text = "€" + str(round(earnings, 2))
+        tax_button.text = str("Tax")
+
 
 class SettWindow(Screen):
     def save_settings(self):
@@ -413,7 +476,7 @@ class WindowManager(ScreenManager):
 class TaxCalc(MDApp):
     def build(self):
         self.theme_cls.primary_palette = "Green"
-        self.theme_cls.primary_hue = "500"
+
 
     def get_sett():
         with open('app_settings.json') as f:
