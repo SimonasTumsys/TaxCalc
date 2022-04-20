@@ -9,8 +9,9 @@ from kivy.core.window import Window
 from kivymd.toast import toast
 from kivy.uix.button import Button
 from kivy.uix.behaviors import ToggleButtonBehavior
-from kivymd.uix.pickers import MDDatePicker
+from kivy.uix.label import Label
 from kivy.utils import get_color_from_hex
+from kivy.clock import Clock
 import os
 import json
 import pdfplumber
@@ -372,33 +373,96 @@ class TableButtonDateWeek(TableButton, ToggleButtonBehavior):
                 self.text = self.week
 
 class StatWindow(Screen):
-    def on_save(self, instance, value, date_range):
+
+    def reset_picker_json(self):
+        with open('date_picker.json', 'r') as f:
+            picker_json = json.load(f)
+        picker_json['months'] = []
+        picker_json['years'] = []
+        with open('date_picker.json', 'w') as f:
+            json.dump(picker_json, f, indent=2)
+
+    def load_date_picker(self):
+        self.reset_picker_json()
+        self.ids.date_picker_year_container.clear_widgets()
+        self.ids.date_picker_month_container.clear_widgets()
+        data = EarnWindow().fetch_data()
+        years = []
+        if data != []:
+            # for row in data:
+            #     start_date_db = datetime.datetime.strptime(row[1], '%Y-%m-%d').date().year
+            #     end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date().year
+            #     if start_date_db not in years:
+            #         years.append(start_date_db)
+            #     if end_date_db not in years:
+            #         years.append(end_date_db)
+            years = [2020,2021,2022]
+            for year in years[-5:]:
+                self.ids.date_picker_year_container.add_widget(
+                    DatePickerButton(text=str(year), nr=year, type='year')
+                )
+
+        for i in range(1, 13):
+            if i < 10:
+                self.ids.date_picker_month_container.add_widget(DatePickerButton(
+                    text='0' + str(i), nr=i, type='month'))
+            else:
+                self.ids.date_picker_month_container.add_widget(DatePickerButton(
+                    text=str(i), nr=i, type='month'))
+
+    
+
+    def make_date_range_string(self):
+        with open('date_picker.json', 'r') as f:
+            picker_json = json.load(f)
+        
+        if picker_json['years'] != [] and picker_json['months'] != []:
+            start_year_str = str(min(picker_json['years']))
+            end_year_str = str(max(picker_json['years']))
+
+            start_month_int = min(picker_json['months'])
+            if start_month_int < 10:
+                start_month_str = '0' + str(start_month_int)
+            else:
+                start_month_str = str(start_month_int)
+
+            end_month_int = max(picker_json['months'])
+            if end_month_int < 10:
+                end_month_str = '0' + str(end_month_int)
+            else:
+                end_month_str = str(end_month_int)
+
+
+            start_date_str = start_year_str + '-' + start_month_str
+            end_date_str = end_year_str + '-' + end_month_str
+
+        return [start_date_str, end_date_str]
+
+
+
+    def generate_by_date(self):
+        date_range = self.make_date_range_string()
+        print(date_range)
         self.ids.platform_toggle_container.clear_widgets()
         self.ids.main_stat_container.clear_widgets()
-        try:
-            start_date = date_range[0]
-            end_date = date_range[-1]
-            data = EarnWindow().fetch_data()
-            if data != []:
-                togglableStatLayout = TogglableStatLayout(data, date_range)
-                self.ids.main_stat_container.add_widget(togglableStatLayout)
-                self.ids.platform_toggle_container.add_widget(PlatformButton(
-                    type='bolt',text='[b]Bolt[/b]'))
-                self.ids.platform_toggle_container.add_widget(PlatformButton(
-                    type='wolt',text='[b]Wolt[/b]'))
-                self.ids.platform_toggle_container.add_widget(PlatformButton(
-                    type='all',text='[b]All[/b]'))
-                
-        except IndexError:
-            toast("Try another date")
+        data = EarnWindow().fetch_data()
+        if data != []:
+            togglableStatLayout = TogglableStatLayout(data, date_range)
+            self.ids.main_stat_container.add_widget(togglableStatLayout)
+            self.ids.platform_toggle_container.add_widget(PlatformButton(
+                type='bolt',text='[b]Bolt[/b]'))
+            self.ids.platform_toggle_container.add_widget(PlatformButton(
+                type='wolt',text='[b]Wolt[/b]'))
+            self.ids.platform_toggle_container.add_widget(PlatformButton(
+                type='all',text='[b]All[/b]'))
 
-    def on_cancel(self, instance, value):
-        '''Events called when the "CANCEL" dialog box button is clicked.'''
 
-    def show_date_picker(self):
-        date_dialog = MDDatePicker(mode='range')
-        date_dialog.bind(on_save=self.on_save, on_cancel=self.on_cancel)
-        date_dialog.open()
+class StatLabel(Label):
+    def __init__(self, type, text, **kwargs):
+        super().__init__(**kwargs)
+        self.type = type
+        self.text = text
+
 
 class PlatformButton(TableButton, ToggleButtonBehavior):
     def __init__(self, type, text, **kwargs):
@@ -413,17 +477,59 @@ class PlatformButton(TableButton, ToggleButtonBehavior):
     def on_state(self, widget, value):
         pass
 
+
+class DatePickerButton(TableButton, ToggleButtonBehavior):
+    def __init__(self, text, nr, type, **kwargs):
+        super().__init__(**kwargs)
+        self.text = text
+        self.nr = nr
+        self.type = type
+        if self.type == 'year':
+            self.size = ('30dp', '20dp')
+            self.padding_y = 5
+
+
+    def on_state(self, widget, value):
+        with open('date_picker.json', 'r') as f:
+            picker_json = json.load(f)
+
+        if self.state == 'down':
+            if self.type == 'month':
+                if self.nr not in picker_json['months']:
+                    picker_json['months'].append(self.nr)
+            else:
+                if self.nr not in picker_json['years']:
+                    picker_json['years'].append(self.nr)
+
+        elif self.state == 'normal':
+            if self.type == 'month':
+                if self.nr in picker_json['months']:
+                    picker_json['months'].remove(self.nr)
+            else:
+                if self.nr in picker_json['years']:
+                    picker_json['years'].remove(self.nr)
+
+        with open('date_picker.json', 'w') as f:
+            json.dump(picker_json, f, indent=2)
+
+
+    def add_date_label(self):
+        with open('date_picker.json', 'r') as f:
+            picker_json = json.load(f)
+        
+        pass
+
 class TogglableStatLayout(GridLayout):
     def __init__(self, data, date_range, **kwargs):
         super().__init__(**kwargs)
         date_button = self.ids.date_button
         earn_button = self.ids.earn_button
         tax_button = self.ids.tax_button
-
         earnings = 0
-        start_date = date_range[0]
-        end_date = date_range[-1]
-
+        start_date = datetime.datetime.strptime(date_range[0], '%Y-%m').date()
+        end_date = datetime.datetime.strptime(date_range[-1], '%Y-%m').date()
+        print(start_date)
+        print(end_date)
         for row in data:
             start_date_db = datetime.datetime.strptime(row[1], '%Y-%m-%d').date()
             end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date()
@@ -438,7 +544,7 @@ class TogglableStatLayout(GridLayout):
 
 class SettWindow(Screen):
     def save_settings(self):
-        with open('app_', 'r') as f:
+        with open('app_settings.json', 'r') as f:
             settings = json.load(f)
 
         if self.ids.lng_button_lt.state == 'down':
@@ -463,7 +569,7 @@ class SettWindow(Screen):
         else:
             settings['pension'] = 3
 
-        with open('app_', 'w') as f:
+        with open('app_settings.json', 'w') as f:
             json.dump(settings, f, indent=2)
 
 

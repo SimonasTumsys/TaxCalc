@@ -65,6 +65,8 @@ WindowManager:
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'stat'
+                    app.root.get_screen('stat').load_date_picker()
+                    
                 
             StrokeButton: ##Settings button
                 font_size: (root.width + root.height) / 30
@@ -238,8 +240,6 @@ WindowManager:
             row_force_default: True
             id: db_container
 
-
-
 <StatWindow>:
     name: "stat"
 
@@ -250,30 +250,38 @@ WindowManager:
         Rectangle:
             pos: self.pos
             size: self.size
-
-    GridLayout:
-        size_hint: (1, 0.2)
-        pos_hint: {'center_x': .5, 'center_y': .875}
-        cols: 1
-        rows: 8
-        StatLabel:
-            text_size: self.size
-            halign: 'left'
-            text: "Failai duomenų bazėje: "
-        Separator:
-        StatLabel:
-            text: "Anksčiausias failas duomenų bazėje: "
-        Separator:
-        StatLabel:
-            text: "Vėliausias failas duomenų bazėje: "
-        Separator:
-        StatLabel:
-            text: "Iš viso failų duomenų bazėje: "
-        Separator:
     
     GridLayout:
+        size_hint: (0.3, 0.1)
+        pos_hint: {'center_x': .3, 'center_y': .867}
+        spacing: 5
+        cols: 5
+        rows: 1
+        col_default_width: '35dp'
+        col_force_default: True
+        # row_default_height: '10dp'
+        # row_force_default: True
+        id: date_picker_year_container
+
+    GridLayout:
+        size_hint: (0.75, 0.2)
+        pos_hint: {'center_x': .5, 'center_y': .775}
+        spacing: 5
+        cols: 6
+        rows: 2
+        id: date_picker_month_container
+    GridLayout:
+        size_hint: (0.7, 0.1)
+        cols: 2
+        rows: 1
+        pos_hint: {'center_x': .4, 'center_y': .785}
+        col_default_width: '50dp'
+        col_force_default: True
+        id: picked_date_container
+
+    GridLayout:
         size_hint: 0.85, 0.07
-        pos_hint: {'center_x': .5, 'center_y': 0.7}
+        pos_hint: {'center_x': .5, 'center_y': 0.68}
         cols: 2
         spacing: [30,100]
         # row_force_default: True
@@ -281,14 +289,13 @@ WindowManager:
         StrokeButton:
             font_size: (root.width + root.height) / 40
             text: app.get_lang()[3]['open']
-            on_release: root.show_date_picker()
+            on_release: root.generate_by_date()
 
         StrokeButton:
             font_size: (root.width + root.height) / 40
             text: app.get_lang()[3]['back']
             on_release:
                 app.root.current = "main"
-
 
     GridLayout:
         size_hint_x: 0.5
@@ -305,13 +312,10 @@ WindowManager:
         size_hint_y: 0.2
         pos_hint: {'center_x': .5, 'center_y': .45}
 
-
 <StatLabel@Label>:
+    font_size: (root.width + root.height) / 15
     text_size: self.size
-    color: 
-    halign: 'left'
-    valign: 'center'
-    padding_x: 30
+    padding_x: 20
     color: utils.get_color_from_hex(app.colors['font_black'])
 
 <TogglableStatLayout@GridLayout>:
@@ -859,19 +863,22 @@ WindowManager:
         Line:  
             rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
 
-<PlatformButtonWolt@TableButton>:
-    font_size: (root.width + root.height) / 7
+<DatePickerButton@TableButton>:
+    font_size: (root.width + root.height) / 6
     background_color: (0,0,0,0)
     background_normal: ''
     font_black_color: utils.get_color_from_hex(app.colors['font_black'])
     back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
     back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
     font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    text_size: self.size
+    padding_x: 10
+    padding_y: 7
     ##Font color:
     color: self.font_black_color if self.state == 'normal' else self.font_color_press
-    size: '30dp', '30dp'
+    # size: '30dp', '30dp'
     size_hint_x: 0.5
-    size_hint_y: None
+    # size_hint_y: None
     canvas.before:
         Color:
             rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
@@ -884,7 +891,6 @@ WindowManager:
             rgba: self.back_color_press or [0,0,0,0]
         Line:  
             rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
-
 
 
 <TableButtonDateWeek>:
