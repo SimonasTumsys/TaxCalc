@@ -1,4 +1,3 @@
-from this import d
 from kivymd.uix.screen import Screen
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
@@ -10,8 +9,6 @@ from kivymd.toast import toast
 from kivy.uix.button import Button
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.label import Label
-from kivy.utils import get_color_from_hex
-from kivy.clock import Clock
 import os
 import json
 import pdfplumber
@@ -29,7 +26,7 @@ class CalcWindow(Screen):
         calcLayout = CalculatedLayout()
         self.ids.calc_container.add_widget(calcLayout)
         
-    with open('app_settings.json', 'r') as f:
+    with open('./app_settings.json', 'r') as f:
         settings = json.load(f)
 
     def calculate(self, settings = settings):
@@ -87,7 +84,7 @@ class FileManager(BoxLayout):
             select_path=self.select_path,
             preview=False,
             search='dirs',
-            background_origin='Green',
+            # background_origin='Green',
         )
 
     def file_manager_open(self):
@@ -115,8 +112,6 @@ class FileManager(BoxLayout):
 
         self.ids.path_label.hint_text = str(path)
 
-
-
     def exit_manager(self, *args):
         '''Called when the user reaches the root of the directory tree.'''
 
@@ -136,6 +131,7 @@ class EarnWindow(Screen):
     ##Function to scan filesystem for Bolt Food (bf) and
     # Wolt (w) PDFs
     def scan_fs(self):
+        print('Called')
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
 
@@ -274,7 +270,7 @@ class EarnWindow(Screen):
 
  
 
-    def reset_db():
+    def reset_db(self):
         conn = sqlite3.connect('pdf_data.db')
         c = conn.cursor()
         c.execute('''DROP TABLE IF EXISTS dated_earnings''')
@@ -436,13 +432,12 @@ class StatWindow(Screen):
             start_date_str = start_year_str + '-' + start_month_str
             end_date_str = end_year_str + '-' + end_month_str
 
-        return [start_date_str, end_date_str]
+            return [start_date_str, end_date_str]
 
 
 
     def generate_by_date(self):
         date_range = self.make_date_range_string()
-        print(date_range)
         self.ids.platform_toggle_container.clear_widgets()
         self.ids.main_stat_container.clear_widgets()
         data = EarnWindow().fetch_data()
@@ -526,10 +521,9 @@ class TogglableStatLayout(GridLayout):
         earn_button = self.ids.earn_button
         tax_button = self.ids.tax_button
         earnings = 0
+        
         start_date = datetime.datetime.strptime(date_range[0], '%Y-%m').date()
         end_date = datetime.datetime.strptime(date_range[-1], '%Y-%m').date()
-        print(start_date)
-        print(end_date)
         for row in data:
             start_date_db = datetime.datetime.strptime(row[1], '%Y-%m-%d').date()
             end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date()
