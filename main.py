@@ -511,10 +511,20 @@ class PlatformButton(TableButton, ToggleButtonBehavior):
 
         if self.state == 'down':
             picker_json['platform'] = self.type
-            StatWindow().clear_widgets()
+            with open('date_picker.json', 'w') as f:
+                json.dump(picker_json, f, indent=2)
+            
+            if self.parent != None:
+                main_stat_container = self.parent.parent.ids.main_stat_container
+                tax_stat_container = self.parent.parent.ids.tax_stat_container
+                main_stat_container.clear_widgets()
+                tax_stat_container.clear_widgets()
+                self.parent.parent.generate_by_date()
+                main_stat_container.tax_button_press()
+
+
         
-        with open('date_picker.json', 'w') as f:
-            json.dump(picker_json, f, indent=2)
+
 
 
 class DatePickerButton(TableButton, ToggleButtonBehavior):
