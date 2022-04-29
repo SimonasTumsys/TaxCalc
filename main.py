@@ -1,3 +1,4 @@
+from socket import gaierror
 from kivymd.uix.screen import Screen
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
@@ -9,6 +10,9 @@ from kivymd.toast import toast
 from kivy.uix.button import Button
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.label import Label
+from kivymd.uix.label import MDIcon
+from kivy.animation import Animation
+import calendar
 import os
 import json
 import pdfplumber
@@ -26,53 +30,74 @@ class CalcWindow(Screen):
         calcLayout = CalculatedLayout()
         self.ids.calc_container.add_widget(calcLayout)
         
-    with open('./app_settings.json', 'r') as f:
+    with open('app_settings.json', 'r') as f:
         settings = json.load(f)
 
-    def calculate(self, settings = settings):
+    def calculate(self, total_earn_arg, total_costs_arg, settings = settings):
         psd_relative_rate = 0.0698
-        vsd_rate = 0.1252
         pension_rate = float(settings['pension'])
+
+        if settings['ssi_relief'] == False:
+            vsd_rate = 0.1252
+        else:
+            vsd_rate = 0
 
         if self.ids.total_earnings.text != '':
             total_earn = float(self.ids.total_earnings.text)
-            if settings['spend_30_percent'] == True:
-                total_costs = total_earn*0.3
+        else:
+            total_earn = float(total_earn_arg)
+        if settings['spend_30_percent'] == True:
+            total_costs = total_earn*0.3
+        else:
+            if self.ids.costs.text != '':
+                total_costs = float(self.ids.costs.text)
             else:
-                if self.ids.costs.text != '':
-                    total_costs = float(self.ids.costs.text)                
+                try:
+                    try:
+                        total_costs = float(total_costs_arg.text)
+                    except AttributeError:
+                        total_costs = float(total_costs_arg)
+                except ValueError:
+                    total_costs = 0
 
-            profit = total_earn - total_costs
+        profit = total_earn - total_costs
 
-            if settings['psd_fixed'] == True:
-                psd_tax = 50.95
-            else:  
-                psd_tax = (profit*0.9)*psd_relative_rate
+        if settings['psd_fixed'] == True:
+            psd_tax = 50.95
+        else:  
+            psd_tax = (profit*0.9)*psd_relative_rate
 
-            vsd_tax = (profit*0.9)*vsd_rate
-            pension_tax = (profit*0.9)*(pension_rate/100)
-            if profit <= 20000:
-                gpm_tax = profit * 0.05
-            elif profit > 20000 and profit < 35000:
-                gpm_tax = profit * 0.15 - profit * (0.1-2/300000 *
-                (profit - 20000))
-            else:
-                gpm_tax = profit*0.15
+        vsd_tax = (profit*0.9)*vsd_rate
+        pension_tax = (profit*0.9)*(pension_rate/100)
+        if profit <= 20000:
+            gpm_tax = profit * 0.05
+        elif profit > 20000 and profit < 35000:
+            gpm_tax = profit * 0.15 - profit * (0.1-2/300000 *
+            (profit - 20000))
+        else:
+            gpm_tax = profit*0.15
 
-            total_tax = psd_tax + vsd_tax + pension_tax + gpm_tax
-            nett_earn = total_earn - total_tax
+        total_tax = psd_tax + vsd_tax + pension_tax + gpm_tax
+        nett_earn = total_earn - total_tax
+        try:
             total_tax_perc = round(total_tax/total_earn*100, 2)
+        except ZeroDivisionError:
+            total_tax_perc = 0
 
-            output = [total_earn, profit, total_costs, 
-            psd_tax, vsd_tax, pension_tax, gpm_tax, 
-            nett_earn, total_tax]
+        output = [total_earn, profit, total_costs, 
+        psd_tax, vsd_tax, pension_tax, gpm_tax, 
+        nett_earn, total_tax]
 
-            output = ['€{:.2f}'.format(x) for x in output]
-            output.append(str(total_tax_perc))
+        output = ['€{:.2f}'.format(x) for x in output]
+        output.append(str(total_tax_perc))
         return output
     
     def useless(self):
         pass
+
+    def cost_toaster(self, settings = settings):
+        if self.ids.costs.text == '' and settings['spend_30_percent'] == False:
+            toast("Please input costs")
 
 class FileManager(BoxLayout):
     def __init__(self, **kwargs):
@@ -84,7 +109,6 @@ class FileManager(BoxLayout):
             select_path=self.select_path,
             preview=False,
             search='dirs',
-            # background_origin='Green',
         )
 
     def file_manager_open(self):
@@ -92,7 +116,7 @@ class FileManager(BoxLayout):
             pdf_paths = json.load(f)
             path = pdf_paths['main_path']
 
-        self.file_manager.show(path)  # output manager to the screen
+        self.file_manager.show(path)
         self.manager_open = True
 
     def select_path(self, path):
@@ -113,14 +137,10 @@ class FileManager(BoxLayout):
         self.ids.path_label.hint_text = str(path)
 
     def exit_manager(self, *args):
-        '''Called when the user reaches the root of the directory tree.'''
-
         self.manager_open = False
         self.file_manager.close()
 
     def events(self, instance, keyboard, keycode, text, modifiers):
-        '''Called when buttons are pressed on the mobile device.'''
-
         if keyboard in (1001, 27):
             if self.manager_open:
                 self.file_manager.back()
@@ -131,7 +151,6 @@ class EarnWindow(Screen):
     ##Function to scan filesystem for Bolt Food (bf) and
     # Wolt (w) PDFs
     def scan_fs(self):
-        print('Called')
         with open('pdf_paths.json', 'r') as f:
             pdf_paths = json.load(f)
 
@@ -267,10 +286,8 @@ class EarnWindow(Screen):
 
             conn.commit() 
         conn.close()
-
- 
-
-    def reset_db(self):
+    
+    def reset_db(self) -> None:
         conn = sqlite3.connect('pdf_data.db')
         c = conn.cursor()
         c.execute('''DROP TABLE IF EXISTS dated_earnings''')
@@ -284,7 +301,10 @@ class EarnWindow(Screen):
         conn.commit()
         conn.close()
 
-
+        with open('pdf_paths.json') as f:
+            pdf_paths = json.load(f)
+            pdf_paths['main_path'] = '/'
+        return
 
     def fetch_data(self):
         conn = sqlite3.connect('pdf_data.db')
@@ -297,8 +317,6 @@ class EarnWindow(Screen):
         earn_data = date_earn_obj.fetchall()
         conn.close()
         return earn_data
-
-        
 
     def show_smaller_table(self):
         data = EarnWindow().fetch_data()
@@ -375,6 +393,7 @@ class StatWindow(Screen):
             picker_json = json.load(f)
         picker_json['months'] = []
         picker_json['years'] = []
+        picker_json['platform'] = 'all'
         with open('date_picker.json', 'w') as f:
             json.dump(picker_json, f, indent=2)
 
@@ -385,14 +404,14 @@ class StatWindow(Screen):
         data = EarnWindow().fetch_data()
         years = []
         if data != []:
-            # for row in data:
-            #     start_date_db = datetime.datetime.strptime(row[1], '%Y-%m-%d').date().year
-            #     end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date().year
-            #     if start_date_db not in years:
-            #         years.append(start_date_db)
-            #     if end_date_db not in years:
-            #         years.append(end_date_db)
-            years = [2020,2021,2022]
+            for row in data:
+                start_date_db = datetime.datetime.strptime(row[1], '%Y-%m-%d').date().year
+                end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date().year
+                if start_date_db not in years:
+                    years.append(start_date_db)
+                if end_date_db not in years:
+                    years.append(end_date_db)
+            years.sort(reverse=True)
             for year in years[-5:]:
                 self.ids.date_picker_year_container.add_widget(
                     DatePickerButton(text=str(year), nr=year, type='year')
@@ -412,25 +431,37 @@ class StatWindow(Screen):
         with open('date_picker.json', 'r') as f:
             picker_json = json.load(f)
         
-        if picker_json['years'] != [] and picker_json['months'] != []:
+        if picker_json['years'] != []:
             start_year_str = str(min(picker_json['years']))
             end_year_str = str(max(picker_json['years']))
+            start_year_int = min(picker_json['years'])
+            end_year_int = max(picker_json['years'])
+            if picker_json['months'] != []:
+                start_month_int = min(picker_json['months'])
+                if start_month_int < 10:
+                    start_month_str = '0' + str(start_month_int)
+                else:
+                    start_month_str = str(start_month_int)
 
-            start_month_int = min(picker_json['months'])
-            if start_month_int < 10:
-                start_month_str = '0' + str(start_month_int)
+                end_month_int = max(picker_json['months'])
+                if end_month_int < 10:
+                    end_month_str = '0' + str(end_month_int)
+                else:
+                    end_month_str = str(end_month_int)
             else:
-                start_month_str = str(start_month_int)
+                start_month_int = 1
+                end_month_int = 12
+                start_month_str = '01'
+                end_month_str = '12'
+ 
+            start_date_days = str(max(calendar.monthcalendar(
+                start_year_int, start_month_int)[-1]))
+            end_date_days = str(max(calendar.monthcalendar(
+                end_year_int, end_month_int)[-1]))
 
-            end_month_int = max(picker_json['months'])
-            if end_month_int < 10:
-                end_month_str = '0' + str(end_month_int)
-            else:
-                end_month_str = str(end_month_int)
+            start_date_str = start_year_str + '-' + start_month_str + '-' + '01'
+            end_date_str = end_year_str + '-' + end_month_str + '-' + end_date_days
 
-
-            start_date_str = start_year_str + '-' + start_month_str
-            end_date_str = end_year_str + '-' + end_month_str
 
             return [start_date_str, end_date_str]
 
@@ -438,18 +469,20 @@ class StatWindow(Screen):
 
     def generate_by_date(self):
         date_range = self.make_date_range_string()
-        self.ids.platform_toggle_container.clear_widgets()
         self.ids.main_stat_container.clear_widgets()
         data = EarnWindow().fetch_data()
-        if data != []:
+        if data != [] and date_range != None:
             togglableStatLayout = TogglableStatLayout(data, date_range)
             self.ids.main_stat_container.add_widget(togglableStatLayout)
-            self.ids.platform_toggle_container.add_widget(PlatformButton(
-                type='bolt',text='[b]Bolt[/b]'))
-            self.ids.platform_toggle_container.add_widget(PlatformButton(
-                type='wolt',text='[b]Wolt[/b]'))
-            self.ids.platform_toggle_container.add_widget(PlatformButton(
-                type='all',text='[b]All[/b]'))
+
+    def add_platform_buttons(self):
+        self.ids.platform_toggle_container.clear_widgets()
+        self.ids.platform_toggle_container.add_widget(PlatformButton(
+            type='bolt',text='[b]Bolt[/b]'))
+        self.ids.platform_toggle_container.add_widget(PlatformButton(
+            type='wolt',text='[b]Wolt[/b]'))
+        self.ids.platform_toggle_container.add_widget(PlatformButton(
+            type='all',text='[b]All[/b]'))
 
 
 class StatLabel(Label):
@@ -466,19 +499,36 @@ class PlatformButton(TableButton, ToggleButtonBehavior):
         self.type = type
         self.text = text
         self.markup = True
-        if type == 'all':
+        self.allow_no_selection = False
+        with open('date_picker.json', 'r') as f:
+            picker_json = json.load(f)
+        if type == picker_json['platform']:
             self.state = 'down'
     
     def on_state(self, widget, value):
-        pass
+        with open('date_picker.json', 'r') as f:
+            picker_json = json.load(f)
+
+        if self.state == 'down':
+            picker_json['platform'] = self.type
+            StatWindow().clear_widgets()
+        
+        with open('date_picker.json', 'w') as f:
+            json.dump(picker_json, f, indent=2)
 
 
 class DatePickerButton(TableButton, ToggleButtonBehavior):
+
     def __init__(self, text, nr, type, **kwargs):
         super().__init__(**kwargs)
         self.text = text
         self.nr = nr
         self.type = type
+        if self.type == 'month':
+            self.group = 'first'
+        else:
+            self.group = 'third'
+
         if self.type == 'year':
             self.size = ('30dp', '20dp')
             self.padding_y = 5
@@ -489,12 +539,20 @@ class DatePickerButton(TableButton, ToggleButtonBehavior):
             picker_json = json.load(f)
 
         if self.state == 'down':
-            if self.type == 'month':
+            if self.type == 'month' and len(picker_json['months']) < 2:
                 if self.nr not in picker_json['months']:
                     picker_json['months'].append(self.nr)
-            else:
+            elif self.type == 'year' and len(picker_json['years']) < 2:
                 if self.nr not in picker_json['years']:
                     picker_json['years'].append(self.nr)
+            elif self.type == 'month' and len(picker_json['months']) >= 2:
+                self.state = 'normal'
+            elif self.type == 'year' and len(picker_json['years']) >= 2:
+                self.state = 'normal'
+            if self.type == 'month' and len(picker_json['months']) <= 1:
+                self.group = 'second'
+            elif self.type == 'year' and len(picker_json['years']) <= 1:
+                self.group = 'fourth'
 
         elif self.state == 'normal':
             if self.type == 'month':
@@ -508,12 +566,6 @@ class DatePickerButton(TableButton, ToggleButtonBehavior):
             json.dump(picker_json, f, indent=2)
 
 
-    def add_date_label(self):
-        with open('date_picker.json', 'r') as f:
-            picker_json = json.load(f)
-        
-        pass
-
 class TogglableStatLayout(GridLayout):
     def __init__(self, data, date_range, **kwargs):
         super().__init__(**kwargs)
@@ -521,20 +573,85 @@ class TogglableStatLayout(GridLayout):
         earn_button = self.ids.earn_button
         tax_button = self.ids.tax_button
         earnings = 0
+
+        with open('date_picker.json', 'r') as f:
+            picker_json = json.load(f)
         
-        start_date = datetime.datetime.strptime(date_range[0], '%Y-%m').date()
-        end_date = datetime.datetime.strptime(date_range[-1], '%Y-%m').date()
+
+        start_date = datetime.datetime.strptime(date_range[0], '%Y-%m-%d').date()
+        end_date = datetime.datetime.strptime(date_range[-1], '%Y-%m-%d').date()
         for row in data:
-            start_date_db = datetime.datetime.strptime(row[1], '%Y-%m-%d').date()
             end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date()
 
-            if start_date <= start_date_db and end_date >= end_date_db:
-                earnings += row[3]
+            if start_date <= end_date_db and end_date >= end_date_db:
+                if picker_json['platform'] == 'all':
+                    earnings += row[3]
+                elif picker_json['platform'] == 'bolt':
+                    if row[0] == 'Bolt Food':
+                        earnings += row[3]
+                    else:
+                        earnings += 0
+                elif picker_json['platform'] == 'wolt':
+                    if row[0] == 'Wolt':
+                        earnings += row[3]
+                    else:
+                        earnings += 0
 
         date_button.text = str(start_date) + ' - ' + str(end_date)
         earn_button.text = "€" + str(round(earnings, 2))
-        tax_button.text = str("Tax")
+        taxes = CalcWindow().calculate(earnings, (earnings*0.3))[8]
 
+        tax_button.text = str(taxes)
+        
+
+    def tax_button_press(self) -> None:
+        tax_stat_container = self.parent.parent.ids.tax_stat_container
+
+        if len(tax_stat_container.children) == 0:
+            isanimate = True
+        else:
+            isanimate = False
+        
+        tax_stat_container.clear_widgets()
+        if self.ids.earn_button.text != '€0.00' and len(
+            tax_stat_container.children) == 0:
+            earnings = self.ids.earn_button.text
+            earnings = float(earnings[1:])
+            
+            taxes = (CalcWindow().calculate(earnings, (earnings*0.3)))[3:8]
+            tax_stat_container.clear_widgets()
+            togglable_tax_layout = TogglableTaxLayout(taxes, isanimate)
+            tax_stat_container.add_widget(
+                togglable_tax_layout)        
+        else:
+            pass
+    
+    def clear_tax_container(self) -> None:
+        self.parent.parent.ids.tax_stat_container.clear_widgets()
+    
+    def useless(self):
+        pass
+
+
+class TogglableTaxLayout(GridLayout):
+ 
+    def animate_me(self):
+        animate = Animation(opacity = 1)
+        animate.start(self)
+        
+    def __init__(self, taxes, isanimate, **kwargs):
+        super().__init__(**kwargs)
+        self.ids.psd_button.text = str(taxes[0])
+        self.ids.vsd_button.text = str(taxes[1])
+        self.ids.pension_button.text = str(taxes[2])
+        self.ids.gpm_button.text = str(taxes[3])
+        self.ids.net_button.text = str(taxes[4])
+        if isanimate == True:
+            self.opacity = 0
+            self.animate_me()
+        else:
+            self.opacity = 1
+        
 
 class SettWindow(Screen):
     def save_settings(self):
@@ -562,6 +679,11 @@ class SettWindow(Screen):
             settings['pension'] = 2.7
         else:
             settings['pension'] = 3
+
+        if self.ids.ssi_r_button_yes.state == 'down':
+            settings['ssi_relief'] = True
+        else:
+            settings['ssi_relief'] = False
 
         with open('app_settings.json', 'w') as f:
             json.dump(settings, f, indent=2)
@@ -599,11 +721,6 @@ class TaxCalc(MDApp):
             lang_data = lang_data[lang]
         return lang_data
     
-    # def build(self):
-    #     self.icon = 'temp_icon.jpg'
-
-
-    # lang_data = get_lang()
     settings = get_sett()
     colors = get_col()
     path = get_path()

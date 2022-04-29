@@ -2,7 +2,8 @@
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
-#:import Calendar calendar.Calendar
+#:import md_icons kivymd.icon_definitions.md_icons
+#:import ScrollEffect kivy.effects.scroll.ScrollEffect
 
 WindowManager:
     transition: NoTransition()
@@ -44,40 +45,45 @@ WindowManager:
 
         ##Main window buttons:
 
-            StrokeButton: ##Calculator button 
+            StrokeButtonIcon: ##Calculator button 
                 font_size: (root.width + root.height) / 30
-                text: app.get_lang()[0]['calc']
+                text: ' ' + app.get_lang()[0]['calc']
+                icon: 'calculator-variant'
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = "calc"
 
-            StrokeButton: ##Enter earnings button
+            StrokeButtonIcon: ##Enter earnings button
                 font_size: (root.width + root.height) / 30
-                text: app.get_lang()[0]['enter_earn']
+                text: ' ' +  app.get_lang()[0]['enter_earn']
+                icon: 'file-pdf-box'
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = "earn"
                     app.root.get_screen('earn').show_smaller_table()
             
-            StrokeButton: ##Statistics button
+            StrokeButtonIcon: ##Statistics button
                 font_size: (root.width + root.height) / 30
-                text: app.get_lang()[0]['stats']
+                text: ' ' +  app.get_lang()[0]['stats']
+                icon: 'chart-bar'
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'stat'
                     app.root.get_screen('stat').load_date_picker()
                     
                 
-            StrokeButton: ##Settings button
+            StrokeButtonIcon: ##Settings button
                 font_size: (root.width + root.height) / 30
-                text: app.get_lang()[0]['sett']
+                text: ' ' +  app.get_lang()[0]['sett']
+                icon: 'wrench'
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'sett'
             
-            StrokeButton: ##About button
+            StrokeButtonIcon: ##About button
                 font_size: (root.width + root.height) / 30
-                text: app.get_lang()[0]['about']
+                text: ' ' +  app.get_lang()[0]['about']
+                icon: 'information'
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'about'
@@ -133,6 +139,7 @@ WindowManager:
                 on_release:
                     root.ids.calc_container.clear_widgets() 
                     root.add_calcLayoutWidget() if root.ids.total_earnings.text != '' else root.useless()
+                    root.cost_toaster() if root.ids.costs.text == '' else root.useless()
                     root.ids.total_earnings.text = ''
                     root.ids.costs.text = ''
 
@@ -230,6 +237,8 @@ WindowManager:
         do_scroll_x: False
         do_scroll_y: True
         bar_width: 0
+        effect_cls: ScrollEffect
+        
         GridLayout:
             size: (root.width, root.height)
             size_hint_x: 1
@@ -259,43 +268,48 @@ WindowManager:
         rows: 1
         col_default_width: '35dp'
         col_force_default: True
-        # row_default_height: '10dp'
-        # row_force_default: True
         id: date_picker_year_container
+        
 
     GridLayout:
-        size_hint: (0.75, 0.2)
-        pos_hint: {'center_x': .5, 'center_y': .775}
+        size_hint: (0.75, 0.125)
+        pos_hint: {'center_x': .5, 'center_y': .815}
         spacing: 5
         cols: 6
         rows: 2
         id: date_picker_month_container
-    GridLayout:
-        size_hint: (0.7, 0.1)
-        cols: 2
-        rows: 1
-        pos_hint: {'center_x': .4, 'center_y': .785}
-        col_default_width: '50dp'
-        col_force_default: True
-        id: picked_date_container
+        padding: 8
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex(app.colors['font_black'])
+            Line:  
+                rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+                width: 2
+                
 
     GridLayout:
         size_hint: 0.85, 0.07
         pos_hint: {'center_x': .5, 'center_y': 0.68}
         cols: 2
         spacing: [30,100]
-        # row_force_default: True
-        # row_default_height: self.height*0.5
         StrokeButton:
             font_size: (root.width + root.height) / 40
-            text: app.get_lang()[3]['open']
-            on_release: root.generate_by_date()
+            text: app.get_lang()[3]['refresh']
+            on_release: 
+                root.add_platform_buttons()
+                root.generate_by_date()
+                root.ids.main_stat_container.children[0].tax_button_press() \
+                if len(root.ids.tax_stat_container.children) != 0 \
+                else app.root.get_screen('calc').useless()
 
         StrokeButton:
             font_size: (root.width + root.height) / 40
             text: app.get_lang()[3]['back']
             on_release:
                 app.root.current = "main"
+                root.ids.platform_toggle_container.clear_widgets()
+                root.ids.main_stat_container.clear_widgets()
+                root.ids.tax_stat_container.clear_widgets()
 
     GridLayout:
         size_hint_x: 0.5
@@ -307,10 +321,20 @@ WindowManager:
 
     GridLayout:
         cols: 1
+        rows: 2 
         id: main_stat_container
         size_hint_x: 0.8
         size_hint_y: 0.2
         pos_hint: {'center_x': .5, 'center_y': .45}
+
+    GridLayout:
+        id: tax_stat_container
+        cols: 1
+        size_hint_x: 0.8
+        size_hint_y: 0.2 
+        pos_hint: {'center_x': .5, 'center_y': .25}
+        # opacity: 0
+
 
 <StatLabel@Label>:
     font_size: (root.width + root.height) / 15
@@ -339,6 +363,36 @@ WindowManager:
             text: app.get_lang()[3]['tax']
         DataButton:
             id: tax_button
+            on_release:
+                root.tax_button_press() if len(root.parent.parent.ids.tax_stat_container.children) == 0 \
+                else root.clear_tax_container()
+
+<TogglableTaxLayout@GridLayout>:
+    # opacity: 0
+    cols: 2
+    rows: 5
+    DataButtonLabel:
+        text: app.get_lang()[1]['psd']
+    DataButtonNumbers:
+        id: psd_button
+    DataButtonLabel:
+        text: app.get_lang()[1]['vsd']
+    DataButtonNumbers:
+        id: vsd_button
+    DataButtonLabel:
+        text: app.get_lang()[1]['pension']
+    DataButtonNumbers:
+        id: pension_button
+    DataButtonLabel:
+        text: app.get_lang()[1]['gpm']
+    DataButtonNumbers:
+        id: gpm_button
+    DataButtonLabel:
+        text: app.get_lang()[1]['net_earn']
+    DataButtonNumbers:
+        id: net_button
+
+
 
 <SettWindow>:
     name: "sett"
@@ -469,21 +523,21 @@ WindowManager:
 
             ##SSI relief setting label and button
             SettingsLabel:
-                text: app.get_lang()[4]['vsd_l']
+                text: app.get_lang()[4]['ssi_r']
             BoxLayout:
                 orientation: 'horizontal'
                 spacing: 5
                 SettingsToggleButton:
-                    id: vsd_l_button_yes
+                    id: ssi_r_button_yes
                     text: app.get_lang()[4]['yes']
-                    group: 'vsd_l'
-                    state: 'down' if app.settings['language'] == 'lt' else 'normal'
+                    group: 'ssi_r'
+                    state: 'down' if app.settings['ssi_relief'] == True else 'normal'
                     
                 SettingsToggleButton:
-                    id: vsd_l_button_no
+                    id: ssi_r_button_no
                     text: app.get_lang()[4]['no']
-                    group: 'vsd_l'
-                    state: 'down' if app.settings['language'] == 'en' else 'normal'
+                    group: 'ssi_r'
+                    state: 'down' if app.settings['ssi_relief'] == False else 'normal'
 
         Separator:
     
@@ -525,7 +579,7 @@ WindowManager:
 
     HelpButton:
         pos_hint: {'x':0.013, 'y':0.302}
-        id: vsd_l_help_button
+        id: ssi_r_help_button
         on_release: Factory.VSDLHelpPopup().open()        
 
 
@@ -588,6 +642,43 @@ WindowManager:
     color: self.font_black_color if self.state == 'normal' else self.font_color_press
 
 <StrokeButton@StyledButton>:
+    border_radius: 25
+    canvas.before:
+    ##Color when pressed and not pressed:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [25]
+    ##Line around button:
+    canvas.after:
+        Color:
+            rgba: self.back_color_press or [0,0,0,0]
+        Line:  
+            rounded_rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1], self.border_radius)
+            width: 2
+
+
+
+<StyledButtonIcon@MDRectangleFlatIconButton>:
+    background_color: (0,0,0,0)
+    background_normal: ''
+    font_black_color: utils.get_color_from_hex(app.colors['font_black'])
+    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
+    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    ##Font color:
+    text_color: self.font_black_color if self.state == 'normal' else self.font_color_press
+    icon_color: self.text_color
+    line_color: (0,0,0,0)
+    size_hint_x: 1
+    ripple_scale: 0
+    ripple_color: utils.get_color_from_hex(app.colors['bg_main'])
+    anchor_x: 'left'
+
+
+<StrokeButtonIcon@StyledButtonIcon>:
     border_radius: 25
     canvas.before:
     ##Color when pressed and not pressed:
@@ -673,11 +764,11 @@ WindowManager:
             text: app.get_lang()[4]['pension_help']
 
 <VSDLHelpPopup@HelpPopup>:
-    title: app.get_lang()[4]['vsd_l']
+    title: app.get_lang()[4]['ssi_r']
     BoxLayout:
         orientation: 'vertical'
         PopupLabel:
-            text: app.get_lang()[4]['vsd_l_help']
+            text: app.get_lang()[4]['ssi_r_help']
 
 <TakeEffectPopup@Popup>:
     size_hint: (0.8, 0.25)
@@ -763,52 +854,62 @@ WindowManager:
         text: app.get_lang()[1]['income']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[0]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[0]
     DataButtonLabel:
         text: app.get_lang()[1]['profit']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[1]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings,
+            app.root.get_screen('calc').ids.costs)[1]
     DataButtonLabel:
         text: app.get_lang()[1]['costs']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[2]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[2]
     DataButtonLabel:
         text: app.get_lang()[1]['psd']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[3]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[3]
     DataButtonLabel:
         text: app.get_lang()[1]['vsd']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[4]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[4]
     DataButtonLabel:
         text: app.get_lang()[1]['pension']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[5]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[5]
     DataButtonLabel:
         text: app.get_lang()[1]['gpm']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[6]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[6]
     DataButtonLabel:
         text: app.get_lang()[1]['net_earn']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[7]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[7]
     DataButtonLabel:
         text: app.get_lang()[1]['total_tax']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[8]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[8]
     DataButtonLabel:
         text: app.get_lang()[1]['tax_perc']
     DataButtonNumbers:
         text:
-            app.root.get_screen('calc').calculate()[9]
+            app.root.get_screen('calc').calculate(app.root.get_screen('calc').ids.total_earnings, 
+            app.root.get_screen('calc').ids.costs)[9]
 
 <TableButton>:
     font_size: (root.width + root.height) / 10

@@ -1,4 +1,10 @@
 {
-  "years": [],
-  "months": []
+  "years": [
+    2021
+  ],
+  "months": [
+    2,
+    8
+  ],
+  "platform": "all"
 }
