@@ -5,7 +5,7 @@
                 "enter_earn": "Uždarbis",
                 "stats": "Statistika",
                 "sett": "Nustatymai",
-                "about": "Apie"
+                "exit": "Išeiti"
             },
             {
                 "input_ph": "Įveskite sumą prieš mokesčius",
@@ -29,17 +29,25 @@
                 "back": "Grįžti",
                 "platform": "Platforma",
                 "week": "Savaitė",
-                "earnings": "Uždarbis"
+                "earnings": "Uždarbis",
+                "choose_folder": "Pasirinkite aplanką su Bolt/Wolt PDF",
+                "fm_help_title": "Skenuoti PDF",
+                "fm_help_content": "Svarbu! Sėkmingai nuskenuotos bus tik Bolt ir Wolt savaitinės ataskaitos! Savaitiniai mokesčio dokumentai neveiks! \n\n Tam, kad įrenginys greičiau nuskenuotų failų sistemą, visus Bolt ir/ar Wolt algalapius sudėkite į vieną aplanką. \n\n Failų tvarkytuvėje pasirinkę šį aplanką, spauskite varnelę. \n\n Jeigu nuskenavus failų nebuvo rasta, vadinasi nebuvo pasirinktas tinkamas aplankas. Jeigu aplanko pasirinkti neleidžia, spauskite 'Nustatyti aplanką iš naujo' mygtuką ir pabandykite vėl."
             },
             {
-                "refresh": "Atnaujinti",
+                "choose_date": "Rinktis datą",
                 "save": "Išsaugoti",
                 "cancel": "Atšaukti",
                 "date": "Data",
                 "earnings": "Uždarbis",
                 "tax": "Mokesčiai",
                 "settings": "Nustatymai",
-                "back": "Grįžti"
+                "back": "Grįžti",
+                "all": "Visi",
+                "no_pdfs": "Nerasta nuskenuotų PDF failų",
+                "pls_date": "Prašome pasirinkti datą",
+                "date_help_title": "Statistika",
+                "date_help_content": "Svarbu! Ši funkcija neveikia, jeigu nėra nuskenuotų PDF failų! \n\n Čia galite pasitikrinti savo mokesčių statistiką pagal datą. \n\n Išsirinkite datą pirmiausia pasirinkdami metus, o tada mėnesį ar mėnesius nuo-iki (pvz. Vas-Kov) \n\n Taip pat, galima rinktis tik metus, norint rodyti visų pasirinktų metų statistiką. Įmanoma pasirinkti ir metus nuo-iki (pvz.: 2020-2022). \n\n Jei pasirenkama keletas metų (pvz.: 2020-2022) ir keletas mėnesių (pvz.: Vas-Kov), bus rodoma min-maks reikšmė: 2020 Vas - 2022 Kov. \n\n Ši statistika skaičiuojama skiriant 30% pajamų išlaidoms." 
 
             },
             {
@@ -55,10 +63,28 @@
                 "psd_help": "PSD - privalomasis sveikatos draudimas.\n\nJeigu esate studentas ar papildomai dirbate pagal darbo sutartį, fiksuoto PSD mokėti nereikia. Kitu atveju, fiksuotas PSD mokamas kiekvieną mėnesį.\n\nFiksuoto PSD įmokos dydis - 6.98% nuo MMA (minimalaus darbo užmokesčio). Nuo 2022m. PSD dydis lygus €50.95/mėn.\n\nPasirinkus 'Taip', fiksuotas PSD visuose naujuose skaičiavimuose pridedamas automatiškai.\n\nPasirinkus 'Ne' - skaičiuojamas tik santykinis PSD (6.98% nuo 90% pelno).",
                 "spend_help": "Kadangi PSD ir VSD (valstybės socialinis draudimas) mokamas nuo 90% pelno (pajamos minus išlaidos), norint apskaičiuoti pelną, svarbu žinoti darbines išlaidas.\n\nPagal VMI tvarką, nedeklaruojamų išlaidų galima turėti 30% nuo visų pajamų, o jei išlaidos didesnės - būtina jas deklaruoti pateikiant dokumentus.\n\nJei manote, kad daug išlaidų neturėsite ir/ar nekaupiate dokumentų, rekomenduojama žymėti 'Taip'. Priešingu atveju, reikės įvesti metines išlaidas ranka.",
                 "pension_help": "Prie VSD (12.52% nuo 90% pelno) prisideda ir kaupiamos pensijos koeficientas.\n\nNorėdami sužinoti savo pensijos kaupimo procentą, nueikite į savo Sodros paskyrą gyventojui.\n\nŠis procentas prisidės prie VSD procento, tad iš viso abu šie mokesčiai gali sudaryti 12.52%, kai pensijos nekaupiate, 15.22%, kai kaupiate 2.7%, ir 15.52%, kai kaupiate 3% pensijos.",
-                "ssi_r_help": "",
+                "ssi_r_help": "Jei tai pirmieji jūsų individualios veiklos metai, galite naudotis VSD lengvata - pirmus metus mokėti tik 3% VSD.",
+                "reset_db": "Nustatyti duomenų bazę\niš naujo",
+                "reset_are_you_sure": "Ar tikrai norite ištrinti duomenis? Visi iki šiol nuskenuotų dokumentų duomenys bus ištrinti.",
+                "reset": "Ištrinti duomenis",
+                "reset_path": "Nustatyti aplanką \n iš naujo",
                 "save_changes": "Išsaugoti pakeitimus",
                 "save_quit": "Išsaugoti\nir išjungti",
                 "take_effect": "Kad šie pakeitimai pradėtų galioti,\npaleiskite programėlę iš naujo"
+            },
+            {
+                "1":"Sau",
+                "2":"Vas",
+                "3":"Kov",
+                "4":"Bal",
+                "5":"Geg",
+                "6":"Bir",
+                "7":"Lie",
+                "8":"Rgp",
+                "9":"Rgs",
+                "10":"Spa",
+                "11":"Lap",
+                "12":"Gru"
             }
     ],
     "en": [
@@ -67,7 +93,7 @@
                 "enter_earn": "Earnings",
                 "stats": "Statistics",
                 "sett": "Settings",
-                "about": "About"
+                "exit": "Exit"
             },
             {
                 "input_ph": "Enter your earnings before tax",
@@ -92,17 +118,25 @@
                 "back": "Back",
                 "platform": "Platform",
                 "week": "Week",
-                "earnings": "Earnings"
+                "earnings": "Earnings",
+                "choose_folder": "Choose folder containing Bolt/Wolt PDFs",
+                "fm_help_title": "Scan PDF",
+                "fm_help_content": "Important! Only Bolt and Wolt Weekly reports will be scanned! Weekly fee or tax documents won't work! \n\n For faster filesystem scanning, put all of your Bolt and / or Wolt PDFs into a single folder. \n\n When the folder is chosen in the file manager, press the check icon. \n\n If no files were found after scanning, a wrong folder was chosen. If it's impossible to open the file manager, press 'Reset folder path'."
             },
             {
-                "refresh": "Refresh",
+                "choose_date": "Choose date",
                 "save": "Save",
                 "cancel": "Cancel",
                 "date": "Date",
                 "earnings": "Earnings",
                 "tax": "Tax",
                 "settings": "Settings",
-                "back": "Back"
+                "back": "Back",
+                "all": "All",
+                "no_pdfs": "No scanned PDFs found",
+                "pls_date": "Please choose date",
+                "date_help_title": "Statistics",
+                "date_help_content": "Important! This function doesn't work if there aren't any scanned PDF files. \n\n This section allows you to check some of your tax statistics.\n\n You can pick a date by first selecting the year and then the month or a range of months (i.e. Feb-Mar). \n\n You can also only pick the year to display the earnings and taxes of the whole year. Picking a range of years (i.e. 2020-2022) is also possible. \n\n If a range of years is picked (i.e. 2020-2022) and a range of months (Feb-Mar), min-max values will be shown: 2020 Feb - 2022 Mar. \n\n The taxes are calculated with 30% income allocated to costs." 
             },
             {
                 "lang": "Language",
@@ -117,10 +151,28 @@
                 "psd_help": "CHI - compulsory health insurance.\n\nIf you are a student or work under an employment contract, you don't need to pay the fixed CHI. Otherwise, fixed CHI needs to be paid monthly.\n\nThe fixed CHI amounts to 6.98% of minimal wage. Starting 2022, this is equal to €50.95/month.\n\nIf 'Yes' is chosen, fixed CHI amount will be automatically added to all new calculations.\n\nIf 'No' is chosen, only the relative CHI (6.98% of 90% profit) will be calculated.",
                 "spend_help": "Since CHI and SSI (state social insurance) is calculated using profit (total income minus total expenditure), it is important to know the amount of work-related expenditure.\n\nAccording to the STI (state tax inspection), the allowed amount of undeclared work-related costs is 30% of total income. If the costs are higher, it is necessary to declare them by providing required documents.\n\nIf you believe that your total costs won't exceed the allowed amount, choose 'Yes'. Otherwise, you will have to input the costs by hand when prompted.",
                 "pension_help": "Added to the SSI (12.52% of 90% profit) is the pension coefficient, used to calculate the amount of pension funds to be accumulated.\n\nIf you want to know more about this coefficient, refer to http://sodra.lt for more information.\n\nThis coefficient will be added to the SSI percentage, so in total both of these taxes can be 12.52% if you do not accumulate pension funds, 15.22% if you allocate 2.7% to pension funds, and 15.52% if you allocate 3%.",
-                "ssi_r_help": "",
+                "ssi_r_help": "If this is your first year of doing individual activity under a business certificate, you can get an SSI relief and choose to pay only 3% of SSI during this first year.",
+                "reset_db": "Reset database",
+                "reset": "Reset",
+                "reset_path": "Reset folder path",
+                "reset_are_you_sure": "All the previously scanned data will be deleted. Are you sure?",
                 "save_changes": "Save changes",
                 "save_quit": "Save and quit",
                 "take_effect": "Restart the app for these changes to take effect"
+            },
+            {
+                "1":"Jan",
+                "2":"Feb",
+                "3":"Mar",
+                "4":"Apr",
+                "5":"May",
+                "6":"Jun",
+                "7":"Jul",
+                "8":"Aug",
+                "9":"Sep",
+                "10":"Oct",
+                "11":"Nov",
+                "12":"Dec"
             }
     ]
 }

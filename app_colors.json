@@ -1,5 +1,5 @@
 {
-    "bg_main": "#D3D3D3",
+    "bg_main": "#F1F1F1",
     "btn_bg": "#FFFFFF",
     "btn_side": "#043a18", 
     "font": "#D3D3D3",
@@ -7,3 +7,4 @@
     "font_black": "#000000",
     "wolt_blue": "#063970"
 }
+

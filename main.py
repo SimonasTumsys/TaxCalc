@@ -1,4 +1,3 @@
-from socket import gaierror
 from kivymd.uix.screen import Screen
 from kivy.uix.screenmanager import ScreenManager
 from kivy.uix.gridlayout import GridLayout
@@ -12,12 +11,17 @@ from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.label import Label
 from kivymd.uix.label import MDIcon
 from kivy.animation import Animation
+from kivy.utils import get_color_from_hex
 import calendar
 import os
 import json
 import pdfplumber
 import datetime
 import sqlite3
+from kivy.utils import platform
+if platform == 'android':
+    from android.permissions import request_permissions, Permission
+    request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
 
 class CalculatedLayout(GridLayout):
     pass
@@ -118,7 +122,7 @@ class FileManager(BoxLayout):
 
         self.file_manager.show(path)
         self.manager_open = True
-
+        
     def select_path(self, path):
         self.exit_manager()
         toast(path)
@@ -195,8 +199,6 @@ class EarnWindow(Screen):
         
     ## Function to extract data from pdfs, save into db:
     def handle_pdf(self):
-        # pb = ProgressBar(max = 1000)
-        # self.ids.pb_container.add_widget(pb)
         conn = sqlite3.connect('pdf_data.db')
         c = conn.cursor()
 
@@ -306,6 +308,19 @@ class EarnWindow(Screen):
             pdf_paths['main_path'] = '/'
         return
 
+    def reset_path(self):
+        with open('pdf_paths.json', 'r') as f:
+            pdf_paths = json.load(f)
+            pdf_paths['main_path'] = '/'
+
+        with open('pdf_paths.json', 'w') as f:
+            json.dump(pdf_paths, f, indent=2)
+        
+
+        self.children[5].children[1].children[0].ids.path_label.hint_text = '/'
+
+
+
     def fetch_data(self):
         conn = sqlite3.connect('pdf_data.db')
         c = conn.cursor()
@@ -387,6 +402,9 @@ class TableButtonDateWeek(TableButton, ToggleButtonBehavior):
                 self.text = self.week
 
 class StatWindow(Screen):
+    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def reset_picker_json(self):
         with open('date_picker.json', 'r') as f:
@@ -398,11 +416,22 @@ class StatWindow(Screen):
             json.dump(picker_json, f, indent=2)
 
     def load_date_picker(self):
+        self.set_years()
+
+        for i in range(1, 13):
+            if i < 10:
+                self.ids.date_picker_month_container.add_widget(DatePickerButton(
+                    text='0' + str(i), nr=i, type='month'))
+            else:
+                self.ids.date_picker_month_container.add_widget(DatePickerButton(
+                    text=str(i), nr=i, type='month'))
+
+
+    def set_years(self):
         self.reset_picker_json()
-        self.ids.date_picker_year_container.clear_widgets()
-        self.ids.date_picker_month_container.clear_widgets()
         data = EarnWindow().fetch_data()
-        years = []
+        current_year = int(datetime.datetime.now().date().strftime("%Y"))
+        years = [current_year]
         if data != []:
             for row in data:
                 start_date_db = datetime.datetime.strptime(row[1], '%Y-%m-%d').date().year
@@ -416,16 +445,26 @@ class StatWindow(Screen):
                 self.ids.date_picker_year_container.add_widget(
                     DatePickerButton(text=str(year), nr=year, type='year')
                 )
+        else:
+            self.ids.date_picker_year_container.add_widget(
+                    DatePickerButton(text=str(current_year), nr=current_year, type='year')
+                )
 
-        for i in range(1, 13):
-            if i < 10:
-                self.ids.date_picker_month_container.add_widget(DatePickerButton(
-                    text='0' + str(i), nr=i, type='month'))
-            else:
-                self.ids.date_picker_month_container.add_widget(DatePickerButton(
-                    text=str(i), nr=i, type='month'))
+    def reset_button(self, button):
+        button.back_color = get_color_from_hex(TaxCalc().colors['bg_main'])
+        button.color = get_color_from_hex(TaxCalc().colors['font_black'])
+        button.state = 'normal'
 
-    
+
+    def reset_color(self):
+        month_container = self.ids.date_picker_month_container.children
+        year_container = self.ids.date_picker_year_container.children
+        if month_container != []:
+            for button in month_container:
+                self.reset_button(button)
+        for button in year_container:
+            self.reset_button(button)
+        
 
     def make_date_range_string(self):
         with open('date_picker.json', 'r') as f:
@@ -466,14 +505,25 @@ class StatWindow(Screen):
             return [start_date_str, end_date_str]
 
 
-
     def generate_by_date(self):
+        data = EarnWindow().fetch_data()
         date_range = self.make_date_range_string()
         self.ids.main_stat_container.clear_widgets()
-        data = EarnWindow().fetch_data()
+        self.ids.platform_toggle_container.clear_widgets()
         if data != [] and date_range != None:
+            self.add_platform_buttons()
             togglableStatLayout = TogglableStatLayout(data, date_range)
             self.ids.main_stat_container.add_widget(togglableStatLayout)
+        elif data == []:
+            data = EarnWindow().fetch_data()
+            if data == []:
+                toast(TaxCalc().get_lang()[3]['no_pdfs'])
+            else:
+                self.add_platform_buttons()
+                togglableStatLayout = TogglableStatLayout(data, date_range)
+                self.ids.main_stat_container.add_widget(togglableStatLayout)
+        elif date_range == None:
+            toast(TaxCalc().get_lang()[3]['pls_date'])
 
     def add_platform_buttons(self):
         self.ids.platform_toggle_container.clear_widgets()
@@ -482,7 +532,26 @@ class StatWindow(Screen):
         self.ids.platform_toggle_container.add_widget(PlatformButton(
             type='wolt',text='[b]Wolt[/b]'))
         self.ids.platform_toggle_container.add_widget(PlatformButton(
-            type='all',text='[b]All[/b]'))
+            type='all',text='[b]' + TaxCalc().get_lang()[3]['all']+ '[/b]'))
+
+    def change_by_date(self):
+        data = EarnWindow().fetch_data()
+        try:
+            main_stat_container = self.ids.main_stat_container
+            date_button = main_stat_container.children[0].ids.date_button
+            earn_button = main_stat_container.children[0].ids.earn_button
+            tax_button = main_stat_container.children[0].ids.tax_button
+
+            stat_layout = main_stat_container.children[0]
+
+            if len(main_stat_container.children) != 0:
+                date_range = self.make_date_range_string()
+                results = stat_layout.extract_earnings_dates(data, date_range)
+                main_stat_container.children[0].change_stat_button_text(
+                    results[0], results[1], results[2], 
+                        date_button, earn_button, tax_button)
+        except TypeError:
+            toast(TaxCalc().get_lang()[3]['pls_date'])
 
 
 class StatLabel(Label):
@@ -504,8 +573,10 @@ class PlatformButton(TableButton, ToggleButtonBehavior):
             picker_json = json.load(f)
         if type == picker_json['platform']:
             self.state = 'down'
-    
+            
+
     def on_state(self, widget, value):
+        data = EarnWindow().fetch_data()
         with open('date_picker.json', 'r') as f:
             picker_json = json.load(f)
 
@@ -517,13 +588,35 @@ class PlatformButton(TableButton, ToggleButtonBehavior):
             if self.parent != None:
                 main_stat_container = self.parent.parent.ids.main_stat_container
                 tax_stat_container = self.parent.parent.ids.tax_stat_container
-                main_stat_container.clear_widgets()
-                tax_stat_container.clear_widgets()
-                self.parent.parent.generate_by_date()
-                main_stat_container.tax_button_press()
 
+                if len(main_stat_container.children) != 0:
+                    date_button = main_stat_container.children[0].ids.date_button
+                    earn_button = main_stat_container.children[0].ids.earn_button
+                    tax_button = main_stat_container.children[0].ids.tax_button
 
-        
+                    stat_layout = main_stat_container.children[0]
+
+                    date_range = self.parent.parent.make_date_range_string()
+                    if data != []:
+                        results = stat_layout.extract_earnings_dates(data, date_range)
+                    else:
+                        data = EarnWindow().fetch_data()
+                        results = stat_layout.extract_earnings_dates(data, date_range)
+                    try:
+                        main_stat_container.children[0].change_stat_button_text(
+                            results[0], results[1], results[2], 
+                                date_button, earn_button, tax_button)
+                    except TypeError:
+                        toast(TaxCalc().get_lang()[3]['pls_date'])
+                
+                if len(tax_stat_container.children) != 0:
+                    earnings = float(earn_button.text[1:])
+                    taxes = (CalcWindow().calculate(earnings, (earnings*0.3)))[3:8]
+                    tax_stat_container.children[0].ids.psd_button.text = str(taxes[0])
+                    tax_stat_container.children[0].ids.vsd_button.text = str(taxes[1])
+                    tax_stat_container.children[0].ids.pension_button.text = str(taxes[2])
+                    tax_stat_container.children[0].ids.gpm_button.text = str(taxes[3])
+                    tax_stat_container.children[0].ids.net_button.text = str(taxes[4])
 
 
 
@@ -531,24 +624,71 @@ class DatePickerButton(TableButton, ToggleButtonBehavior):
 
     def __init__(self, text, nr, type, **kwargs):
         super().__init__(**kwargs)
-        self.text = text
+        
+        self.text = '[b]' + text + '[/b]'
         self.nr = nr
         self.type = type
         if self.type == 'month':
             self.group = 'first'
+            self.text = self.get_month()
         else:
             self.group = 'third'
 
         if self.type == 'year':
-            self.size = ('30dp', '20dp')
-            self.padding_y = 5
+            self.markup = True
 
+    def get_month(self):
+        if self.nr == 1:
+            return TaxCalc().get_lang()[5]['1']
+        elif self.nr == 2:
+            return TaxCalc().get_lang()[5]['2']
+        elif self.nr == 3:
+            return TaxCalc().get_lang()[5]['3']
+        elif self.nr == 4:
+            return TaxCalc().get_lang()[5]['4']
+        elif self.nr == 5:
+            return TaxCalc().get_lang()[5]['5']
+        elif self.nr == 6:
+            return TaxCalc().get_lang()[5]['6']
+        elif self.nr == 7:
+            return TaxCalc().get_lang()[5]['7']
+        elif self.nr == 8:
+            return TaxCalc().get_lang()[5]['8']
+        elif self.nr == 9:
+            return TaxCalc().get_lang()[5]['9']
+        elif self.nr == 10:
+            return TaxCalc().get_lang()[5]['10']
+        elif self.nr == 11:
+            return TaxCalc().get_lang()[5]['11']
+        elif self.nr == 12:
+            return TaxCalc().get_lang()[5]['12']
+
+    def change_color(self, json):
+        picker_json = json
+        try:
+            if len(picker_json['months']) > 1:
+                    for button in self.parent.children:    
+                        if button.nr > min(picker_json['months']) and button.nr < max(
+                            picker_json['months']):
+                            button.back_color = get_color_from_hex(TaxCalc().colors['btn_side'])
+                            button.color = get_color_from_hex(TaxCalc().colors['font'])
+                        else:
+                            button.back_color = get_color_from_hex(TaxCalc().colors['bg_main'])
+                        
+            else:
+                if self.parent.children != None:
+                    for button in self.parent.children:
+                        button.back_color = get_color_from_hex(TaxCalc().colors['bg_main'])
+                        button.color = get_color_from_hex(TaxCalc().colors['font_black'])
+        except AttributeError:
+            pass
 
     def on_state(self, widget, value):
         with open('date_picker.json', 'r') as f:
             picker_json = json.load(f)
 
         if self.state == 'down':
+            self.change_color(picker_json)
             if self.type == 'month' and len(picker_json['months']) < 2:
                 if self.nr not in picker_json['months']:
                     picker_json['months'].append(self.nr)
@@ -564,16 +704,25 @@ class DatePickerButton(TableButton, ToggleButtonBehavior):
             elif self.type == 'year' and len(picker_json['years']) <= 1:
                 self.group = 'fourth'
 
+            self.change_color(picker_json)
+            with open('date_picker.json', 'w') as f:
+                json.dump(picker_json, f, indent=2)
+
+
         elif self.state == 'normal':
             if self.type == 'month':
                 if self.nr in picker_json['months']:
                     picker_json['months'].remove(self.nr)
+                self.group = 'first'
             else:
                 if self.nr in picker_json['years']:
                     picker_json['years'].remove(self.nr)
+                self.group = 'third'
 
-        with open('date_picker.json', 'w') as f:
-            json.dump(picker_json, f, indent=2)
+            self.change_color(picker_json)
+            with open('date_picker.json', 'w') as f:
+                json.dump(picker_json, f, indent=2)
+
 
 
 class TogglableStatLayout(GridLayout):
@@ -582,36 +731,53 @@ class TogglableStatLayout(GridLayout):
         date_button = self.ids.date_button
         earn_button = self.ids.earn_button
         tax_button = self.ids.tax_button
-        earnings = 0
 
+        earnings = self.extract_earnings_dates(data, date_range)[0]
+        start_date = self.extract_earnings_dates(data, date_range)[1]      
+        end_date = self.extract_earnings_dates(data, date_range)[2]  
+        self.change_stat_button_text(earnings, start_date, end_date, 
+            date_button, earn_button, tax_button)
+        
+
+    def extract_earnings_dates(self, data, date_range):
+        earnings = 0
         with open('date_picker.json', 'r') as f:
             picker_json = json.load(f)
         
+        try:
+            start_date = datetime.datetime.strptime(date_range[0], '%Y-%m-%d').date()
+            end_date = datetime.datetime.strptime(date_range[-1], '%Y-%m-%d').date()
+            for row in data:
+                end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date()
 
-        start_date = datetime.datetime.strptime(date_range[0], '%Y-%m-%d').date()
-        end_date = datetime.datetime.strptime(date_range[-1], '%Y-%m-%d').date()
-        for row in data:
-            end_date_db = datetime.datetime.strptime(row[2], '%Y-%m-%d').date()
+                if start_date <= end_date_db and end_date >= end_date_db:
+                    if picker_json['platform'] == 'all':
+                        earnings += row[3]
+                    elif picker_json['platform'] == 'bolt':
+                        if row[0] == 'Bolt Food':
+                            earnings += row[3]
+                        else:
+                            earnings += 0
+                    elif picker_json['platform'] == 'wolt':
+                        if row[0] == 'Wolt':
+                            earnings += row[3]
+                        else:
+                            earnings += 0
+        
+            return [earnings, start_date, end_date]
+        except TypeError:
+            pass
 
-            if start_date <= end_date_db and end_date >= end_date_db:
-                if picker_json['platform'] == 'all':
-                    earnings += row[3]
-                elif picker_json['platform'] == 'bolt':
-                    if row[0] == 'Bolt Food':
-                        earnings += row[3]
-                    else:
-                        earnings += 0
-                elif picker_json['platform'] == 'wolt':
-                    if row[0] == 'Wolt':
-                        earnings += row[3]
-                    else:
-                        earnings += 0
+
+    def change_stat_button_text(self, earnings, start_date, end_date, 
+            date_button, earn_button, tax_button) -> None:
 
         date_button.text = str(start_date) + ' - ' + str(end_date)
         earn_button.text = "€" + str(round(earnings, 2))
-        taxes = CalcWindow().calculate(earnings, (earnings*0.3))[8]
-
-        tax_button.text = str(taxes)
+        calcWindow = CalcWindow()
+        taxes = calcWindow.calculate(earnings, (earnings*0.3))[8]
+        tax_button.markup = True
+        tax_button.text = str(taxes) + '[size=10sp] ...[/size]'
         
 
     def tax_button_press(self) -> None:
@@ -629,27 +795,28 @@ class TogglableStatLayout(GridLayout):
             earnings = float(earnings[1:])
             
             taxes = (CalcWindow().calculate(earnings, (earnings*0.3)))[3:8]
-            tax_stat_container.clear_widgets()
             togglable_tax_layout = TogglableTaxLayout(taxes, isanimate)
+            tax_stat_container.clear_widgets()
             tax_stat_container.add_widget(
-                togglable_tax_layout)        
+                togglable_tax_layout)
+                
         else:
             pass
     
     def clear_tax_container(self) -> None:
         self.parent.parent.ids.tax_stat_container.clear_widgets()
-    
+
     def useless(self):
         pass
 
 
 class TogglableTaxLayout(GridLayout):
  
-    def animate_me(self):
+    def animate_me(self) -> None:
         animate = Animation(opacity = 1)
         animate.start(self)
         
-    def __init__(self, taxes, isanimate, **kwargs):
+    def __init__(self, taxes, isanimate, **kwargs) -> None:
         super().__init__(**kwargs)
         self.ids.psd_button.text = str(taxes[0])
         self.ids.vsd_button.text = str(taxes[1])
@@ -664,7 +831,7 @@ class TogglableTaxLayout(GridLayout):
         
 
 class SettWindow(Screen):
-    def save_settings(self):
+    def save_settings(self) -> None:
         with open('app_settings.json', 'r') as f:
             settings = json.load(f)
 

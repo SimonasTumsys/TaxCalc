@@ -60,8 +60,11 @@ WindowManager:
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = "earn"
-                    app.root.get_screen('earn').show_smaller_table()
-            
+                    app.root.get_screen('earn').show_smaller_table() if \
+                    app.root.get_screen('earn').ids.db_container.children == [] \
+                    else app.root.get_screen('calc').useless()
+
+
             StrokeButtonIcon: ##Statistics button
                 font_size: (root.width + root.height) / 30
                 text: ' ' +  app.get_lang()[0]['stats']
@@ -69,7 +72,9 @@ WindowManager:
                 font_name: 'DejaVuSans'
                 on_release:
                     app.root.current = 'stat'
-                    app.root.get_screen('stat').load_date_picker()
+                    app.root.get_screen('stat').load_date_picker() if \
+                    app.root.get_screen('stat').ids.date_picker_month_container.children == [] \
+                    else app.root.get_screen('calc').useless()
                     
                 
             StrokeButtonIcon: ##Settings button
@@ -82,11 +87,11 @@ WindowManager:
             
             StrokeButtonIcon: ##About button
                 font_size: (root.width + root.height) / 30
-                text: ' ' +  app.get_lang()[0]['about']
-                icon: 'information'
+                text: ' ' +  app.get_lang()[0]['exit']
+                icon: 'exit-run'
                 font_name: 'DejaVuSans'
                 on_release:
-                    app.root.current = 'about'
+                    app.stop()
 
 
 <CalcWindow>:
@@ -191,7 +196,7 @@ WindowManager:
             Label:
                 halign: 'left'
                 text_size: self.size
-                text: 'Pasirinkite aplanką su Bolt/Wolt PDF'
+                text: app.get_lang()[2]['choose_folder']
                 color: utils.get_color_from_hex(app.colors['font_black'])
 
             FileManager:
@@ -211,14 +216,13 @@ WindowManager:
                     root.ids.db_container.clear_widgets()  
                     root.ids.db_header_container.clear_widgets()  
                     root.show_smaller_table()
-                    
+                    app.root.get_screen('stat').ids.date_picker_year_container.clear_widgets()
+                    app.root.get_screen('stat').set_years()
                     
             StrokeButton:
                 font_size: (root.width + root.height) / 35
                 text: app.get_lang()[2]['back']
                 on_release:
-                    root.ids.db_container.clear_widgets()
-                    root.ids.db_header_container.clear_widgets()     
                     app.root.current = 'main'
 
 
@@ -248,65 +252,140 @@ WindowManager:
             row_default_height: '30dp'
             row_force_default: True
             id: db_container
+    
 
+    ResetDbButton:
+        pos_hint: {'center_x':0.75, 'center_y':0.04}
+        size_hint: (0.3, 0.04)
+        id: reset_db_button
+        disabled: True if len(root.ids.db_container.children) == 0 else False
+        opacity: 0 if len(root.ids.db_container.children) == 0 else 1 
+        on_release: 
+            Factory.ResetDbPopup().open()
+    
+    
+    ResetPathButton:
+        pos_hint: {'center_x':0.25, 'center_y':0.04}
+        size_hint: (0.3, 0.04)
+        id: reset_path_button
+        on_release: 
+            root.reset_path()
+
+    HelpButton:
+        pos_hint: {'x':0.475, 'y':0.79}
+        id: file_manager_help_button
+        on_release: Factory.FileManagerHelpPopup().open()
+
+
+<FileManagerHelpPopup@HelpPopup>:
+    title: app.get_lang()[2]['fm_help_title']
+    BoxLayout:
+        orientation: 'vertical'
+        PopupLabel:
+            text: app.get_lang()[2]['fm_help_content']
+
+            
+            
 <StatWindow>:
     name: "stat"
-
-
     canvas.before:
         Color:
             rgba: utils.get_color_from_hex(app.colors['bg_main'])
         Rectangle:
             pos: self.pos
             size: self.size
+
+    GridLayout:
+        size_hint: (0.8, 0.00001)
+        pos_hint: {'center_x': .5, 'center_y': .92}
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex(app.colors['font_black'])
+            Line:  
+                rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+                width: 1
+        
     
     GridLayout:
-        size_hint: (0.3, 0.1)
-        pos_hint: {'center_x': .3, 'center_y': .867}
+        size_hint: (0.3, 0.035)
+        pos_hint: {'center_x': .35, 'center_y': .897}
         spacing: 5
         cols: 5
         rows: 1
         col_default_width: '35dp'
         col_force_default: True
         id: date_picker_year_container
-        
-
+    
     GridLayout:
-        size_hint: (0.75, 0.125)
-        pos_hint: {'center_x': .5, 'center_y': .815}
-        spacing: 5
-        cols: 6
-        rows: 2
-        id: date_picker_month_container
-        padding: 8
+        size_hint: (0.7, 0.00001)
+        pos_hint: {'center_x': .5, 'center_y': .875}
         canvas.before:
             Color:
                 rgba: utils.get_color_from_hex(app.colors['font_black'])
             Line:  
                 rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
-                width: 2
+                width: 1
+
+    MDIcon:
+        icon: 'calendar-multiselect'
+        pos_hint: {'center_x': .8, 'center_y': .896}
+
+        
+
+    GridLayout:
+        size_hint: (0.6, 0.175)
+        pos_hint: {'center_x': .5, 'center_y': .785}
+        spacing: 5
+        cols: 4
+        rows: 3
+        id: date_picker_month_container
+        padding: 8
                 
+    GridLayout:
+        size_hint: (0.7, 0.00001)
+        pos_hint: {'center_x': .5, 'center_y': .694}
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex(app.colors['font_black'])
+            Line:  
+                rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+                width: 1
+
+    GridLayout:
+        size_hint: (0.8, 0.00001)
+        pos_hint: {'center_x': .5, 'center_y': .68}
+        canvas.before:
+            Color:
+                rgba: utils.get_color_from_hex(app.colors['font_black'])
+            Line:  
+                rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
+                width: 1
 
     GridLayout:
         size_hint: 0.85, 0.07
-        pos_hint: {'center_x': .5, 'center_y': 0.68}
+        pos_hint: {'center_x': .5, 'center_y': 0.625}
         cols: 2
         spacing: [30,100]
         StrokeButton:
-            font_size: (root.width + root.height) / 40
-            text: app.get_lang()[3]['refresh']
+            font_size: (root.width + root.height) / 42
+            text: app.get_lang()[3]['choose_date']
             on_release: 
-                root.add_platform_buttons()
-                root.generate_by_date()
+                root.generate_by_date() if len(root.ids.main_stat_container.children) == 0 \
+                else root.change_by_date()
                 root.ids.main_stat_container.children[0].tax_button_press() \
-                if len(root.ids.tax_stat_container.children) != 0 \
+                if len(root.ids.tax_stat_container.children) != 0 and \
+                len(root.ids.main_stat_container.children) != 0 \
                 else app.root.get_screen('calc').useless()
+                
 
         StrokeButton:
-            font_size: (root.width + root.height) / 40
+            font_size: (root.width + root.height) / 42
             text: app.get_lang()[3]['back']
             on_release:
                 app.root.current = "main"
+                root.reset_color() \
+                if len(root.ids.date_picker_month_container.children) != 0 \
+                else app.root.get_screen('calc').useless()
                 root.ids.platform_toggle_container.clear_widgets()
                 root.ids.main_stat_container.clear_widgets()
                 root.ids.tax_stat_container.clear_widgets()
@@ -316,7 +395,7 @@ WindowManager:
         cols: 3
         rows: 1
         id: platform_toggle_container
-        pos_hint: {'center_x': .6, 'center_y': .56}
+        pos_hint: {'center_x': .6, 'center_y': .51}
         size_hint_y: 0.1
 
     GridLayout:
@@ -325,15 +404,27 @@ WindowManager:
         id: main_stat_container
         size_hint_x: 0.8
         size_hint_y: 0.2
-        pos_hint: {'center_x': .5, 'center_y': .45}
+        pos_hint: {'center_x': .5, 'center_y': .4}
 
     GridLayout:
         id: tax_stat_container
         cols: 1
         size_hint_x: 0.8
         size_hint_y: 0.2 
-        pos_hint: {'center_x': .5, 'center_y': .25}
-        # opacity: 0
+        pos_hint: {'center_x': .5, 'center_y': .2}
+
+    HelpButton:
+        pos_hint: {'x':0.475, 'y':0.65}
+        id: date_picker_help_button
+        on_release: Factory.DatePickerHelpPopup().open()
+
+
+<DatePickerHelpPopup@HelpPopup>:
+    title: app.get_lang()[3]['date_help_title']
+    BoxLayout:
+        orientation: 'vertical'
+        PopupLabel:
+            text: app.get_lang()[3]['date_help_content']
 
 
 <StatLabel@Label>:
@@ -367,8 +458,8 @@ WindowManager:
                 root.tax_button_press() if len(root.parent.parent.ids.tax_stat_container.children) == 0 \
                 else root.clear_tax_container()
 
+
 <TogglableTaxLayout@GridLayout>:
-    # opacity: 0
     cols: 2
     rows: 5
     DataButtonLabel:
@@ -391,7 +482,6 @@ WindowManager:
         text: app.get_lang()[1]['net_earn']
     DataButtonNumbers:
         id: net_button
-
 
 
 <SettWindow>:
@@ -563,12 +653,12 @@ WindowManager:
 
 
     HelpButton:
-        pos_hint: {'x':0.013, 'y':0.8}
+        pos_hint: {'x':0.013, 'y':0.81}
         id: psd_help_button
         on_release: Factory.PSDHelpPopup().open()
 
     HelpButton:
-        pos_hint: {'x':0.013, 'y':0.634}
+        pos_hint: {'x':0.013, 'y':0.64}
         id: spending_help_button
         on_release: Factory.SpendHelpPopup().open()
 
@@ -578,24 +668,9 @@ WindowManager:
         on_release: Factory.PensionHelpPopup().open()
 
     HelpButton:
-        pos_hint: {'x':0.013, 'y':0.302}
+        pos_hint: {'x':0.013, 'y':0.296}
         id: ssi_r_help_button
         on_release: Factory.VSDLHelpPopup().open()        
-
-
-
-<AboutWindow>:
-    ## App's background color
-    canvas.before:
-        Color:
-            rgba: utils.get_color_from_hex(app.colors['bg_main']) ## Background grey
-
-        Rectangle:
-            pos: self.pos
-            size: self.size
-
-    name: "about"
-    size: root.size
 
 
 <FileManager>:
@@ -615,7 +690,6 @@ WindowManager:
             halign: 'center'
             text_size: self.size
             icon: "folder"
-            # icon_size: 0.5, 0.5
             pos_hint: {'x': .5, 'y': .05}
             on_release: root.file_manager_open()
 
@@ -806,6 +880,45 @@ WindowManager:
                     root.dismiss()
 
 
+<ResetDbPopup@Popup>:
+    size_hint: (0.8, 0.25)
+    pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+    title: ''
+    separator_height: 0
+    #background_color: utils.get_color_from_hex('#242725')
+    auto_dismiss: False
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: app.get_lang()[4]['reset_are_you_sure']
+            font_size: (root.width + root.height) / 35
+            color: utils.get_color_from_hex(app.colors['font'])
+            valign: 'middle'
+            halign: 'center'
+            text_size: self.size
+        BoxLayout:
+            orientation: 'horizontal'
+            spacing: 30
+            StrokeButton: ##Save and quit button
+                font_size: (root.width + root.height) / 35
+                text: app.get_lang()[4]['reset']
+                font_name: 'DejaVuSans'
+                size_hint: (1, 0.6)
+                on_release:
+                    app.root.get_screen('earn').reset_db()
+                    app.root.get_screen('earn').ids.db_header_container.clear_widgets() 
+                    app.root.get_screen('earn').ids.db_container.clear_widgets()
+                    app.root.get_screen('stat').ids.date_picker_year_container.clear_widgets()
+                    app.root.get_screen('stat').set_years()
+                    root.dismiss()
+            StrokeButton: ##Cancel button
+                font_size: (root.width + root.height) / 35
+                text: app.get_lang()[4]['cancel']
+                font_name: 'DejaVuSans'
+                size_hint: (1, 0.6)
+                on_release:
+                    root.dismiss()
+
 <PopupLabel@Label>:
     valign: 'middle'
     halign: 'center'
@@ -969,27 +1082,30 @@ WindowManager:
     background_color: (0,0,0,0)
     background_normal: ''
     font_black_color: utils.get_color_from_hex(app.colors['font_black'])
-    back_color: utils.get_color_from_hex(app.colors['btn_bg']) ## White
+    back_color: utils.get_color_from_hex(app.colors['bg_main']) ## White
     back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
-    font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
+    font_color_press: utils.get_color_from_hex(app.colors['font_black']) ## Font Grey
     text_size: self.size
-    padding_x: 10
-    padding_y: 7
+    halign: 'center'
+    valign: 'center'
+    size: self.size
+    # padding_x: 10
+    # padding_y: 7
     ##Font color:
-    color: self.font_black_color if self.state == 'normal' else self.font_color_press
+    color: self.font_black_color
     # size: '30dp', '30dp'
     size_hint_x: 0.5
-    # size_hint_y: None
+    size_hint_y: 0.5
     canvas.before:
         Color:
-            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
+            rgba: self.back_color
         Rectangle:
             size: self.size
             pos: self.pos
         ##Line around button:
     canvas.after:
         Color:
-            rgba: self.back_color_press or [0,0,0,0]
+            rgba: self.back_color or [0,0,0,0] if self.state == 'normal' else self.back_color_press or [0,0,0,0] 
         Line:  
             rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1])
 
@@ -1021,3 +1137,23 @@ WindowManager:
 
 <DataButtonDate@DataButton>:
     font_size: (root.width + root.height) / 20
+
+
+
+<ResetDbButton@StyledButton>:
+    color: self.back_color_press if self.state == 'down' else self.font_color_press
+    text: app.get_lang()[4]['reset_db']
+    font_size: (root.width + root.height) / 15
+    text_size: self.size
+    halign: 'center'
+    valign: 'center'
+    canvas.before:
+        Color:
+            rgba: self.back_color or [0,0,0,0] if self.state == 'down' else self.back_color_press or [0,0,0,0] 
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [5]
+
+<ResetPathButton@ResetDbButton>:
+    text: app.get_lang()[4]['reset_path']
