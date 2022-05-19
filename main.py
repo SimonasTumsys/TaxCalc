@@ -875,6 +875,7 @@ class WindowManager(ScreenManager):
 class TaxCalc(MDApp):
     def build(self):
         self.theme_cls.primary_palette = "Green"
+        self.icon = 'images/logo.png'
 
 
     def get_sett():
