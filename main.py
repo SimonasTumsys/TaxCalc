@@ -10,6 +10,8 @@ from kivy.uix.button import Button
 from kivy.uix.behaviors import ToggleButtonBehavior
 from kivy.uix.label import Label
 from kivymd.uix.label import MDIcon
+import kivy
+import kivymd
 from kivy.animation import Animation
 from kivy.utils import get_color_from_hex
 import calendar
@@ -22,6 +24,11 @@ from kivy.utils import platform
 if platform == 'android':
     from android.permissions import request_permissions, Permission
     request_permissions([Permission.READ_EXTERNAL_STORAGE, Permission.WRITE_EXTERNAL_STORAGE])
+
+
+print(kivy.__version__)
+print(kivymd.__version__)
+
 
 class CalculatedLayout(GridLayout):
     pass
@@ -874,7 +881,7 @@ class WindowManager(ScreenManager):
 
 class TaxCalc(MDApp):
     def build(self):
-        self.theme_cls.primary_palette = "Green"
+        self.theme_cls.primary_palette = "Indigo"
         self.icon = 'images/logo.png'
 
 

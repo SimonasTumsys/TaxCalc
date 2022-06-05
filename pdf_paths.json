@@ -1,6 +1,135 @@
 {
-  "bf": [],
-  "wolt": [],
-  "meta_list": [],
-  "main_path": "/"
+  "bf": [
+    "/Users/PC/Desktop/Bolt Documents\\2021-04-26 -- 2021-05-03 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-05-03 -- 2021-05-10 Simonas Tumsys Weekly Report (1).pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-05-10 -- 2021-05-17 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-05-31 -- 2021-06-07 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-06-07 -- 2021-06-14 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-07-05 -- 2021-07-12 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-07-12 -- 2021-07-19 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-07-26 -- 2021-08-02 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-08-02 -- 2021-08-09 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-08-09 -- 2021-08-16 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-08-16 -- 2021-08-23 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-08-23 -- 2021-08-30 Simonas Tumsys Weekly Report.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\2021-10-25 -- 2021-11-01 Simonas Tumsys Weekly Report (1).pdf"
+  ],
+  "wolt": [
+    "/Users/PC/Desktop/Bolt Documents\\787216_457c3844-09cd-42fc-b888-f291c49b2f99.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\787216_7493d6fd-be3a-4407-bab9-19fcb533dd66.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\787216_dc386025-8a83-44a0-9fe4-6a39a2a415e0.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\787216_e030a610-7bac-4dee-ab6c-b631fcb046cd-1.pdf",
+    "/Users/PC/Desktop/Bolt Documents\\787216_f1c03df0-27cd-40cd-98f1-94682f812c67-1.pdf"
+  ],
+  "meta_list": [
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132426+00'00'",
+      "ModDate": "D:20220401132426+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132434+00'00'",
+      "ModDate": "D:20220401132434+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132555+00'00'",
+      "ModDate": "D:20220401132555+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132509+00'00'",
+      "ModDate": "D:20220401132509+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220406122715+00'00'",
+      "ModDate": "D:20220406122715+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220406122656+00'00'",
+      "ModDate": "D:20220406122656+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220406121106+00'00'",
+      "ModDate": "D:20220406121106+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220406122631+00'00'",
+      "ModDate": "D:20220406122631+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220406122622+00'00'",
+      "ModDate": "D:20220406122622+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220406122609+00'00'",
+      "ModDate": "D:20220406122609+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220406122446+00'00'",
+      "ModDate": "D:20220406122446+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220406122430+00'00'",
+      "ModDate": "D:20220406122430+00'00'"
+    },
+    {
+      "Creator": "Chromium",
+      "Producer": "Skia/PDF m87",
+      "CreationDate": "D:20220401132306+00'00'",
+      "ModDate": "D:20220401132306+00'00'"
+    },
+    {
+      "Title": "",
+      "Creator": "wkhtmltopdf 0.12.5",
+      "Producer": "Qt 4.8.7",
+      "CreationDate": "D:20211018124735Z"
+    },
+    {
+      "Title": "",
+      "Creator": "wkhtmltopdf 0.12.5",
+      "Producer": "Qt 4.8.7",
+      "CreationDate": "D:20210916151621Z"
+    },
+    {
+      "Title": "",
+      "Creator": "wkhtmltopdf 0.12.5",
+      "Producer": "Qt 4.8.7",
+      "CreationDate": "D:20211118102232Z"
+    },
+    {
+      "Title": "",
+      "Creator": "wkhtmltopdf 0.12.5",
+      "Producer": "Qt 4.8.7",
+      "CreationDate": "D:20210901090839Z"
+    },
+    {
+      "Title": "",
+      "Creator": "wkhtmltopdf 0.12.5",
+      "Producer": "Qt 4.8.7",
+      "CreationDate": "D:20211004105312Z"
+    }
+  ],
+  "main_path": "/Users\\PC\\Desktop\\Bolt Documents"
 }

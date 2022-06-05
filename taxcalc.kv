@@ -1,4 +1,4 @@
-#:kivy 2.2.0
+#:kivy 2.1.0
 #:import utils kivy.utils
 #:import Factory kivy.factory.Factory
 #:import NoTransition kivy.uix.screenmanager.NoTransition
@@ -743,6 +743,7 @@ WindowManager:
     back_color_press: utils.get_color_from_hex(app.colors['btn_side']) ## Dark Green
     font_color_press: utils.get_color_from_hex(app.colors['font']) ## Font Grey
     ##Font color:
+    theme_icon_color: 'Custom'
     text_color: self.font_black_color if self.state == 'normal' else self.font_color_press
     icon_color: self.text_color
     line_color: (0,0,0,0)
