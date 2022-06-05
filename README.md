@@ -21,4 +21,4 @@ but need to sort out the colors of the app, which are bugged in the older versio
 Screenshots:
 
 ![Main Window](/screenshots/main_window.PNG?raw=true "Main Window" height="50%")
-<img src="/screenshots/main_window.PNG?raw=true" alt="Main Window" height="40%")
+<img src="https://github.com/SimonasTumsys/taxcalc/tree/main/screenshots/main_window.PNG?raw=true" alt="Main Window" height="40%")
