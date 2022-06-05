@@ -20,4 +20,4 @@ but need to sort out the colors of the app, which are bugged in the older versio
 
 Screenshots:
 
-![Main Window](/taxcalc/screenshots/main_window.png?raw=true "Main Window")
+![Main Window](/screenshots/main_window.png?raw=true "Main Window")
