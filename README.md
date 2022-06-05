@@ -20,6 +20,5 @@ but need to sort out the colors of the app, which are bugged in the older versio
 
 Screenshots:
 
-<div style="height:40%">
 ![Main Window](/screenshots/main_window.PNG?raw=true "Main Window")
-<div>
+
