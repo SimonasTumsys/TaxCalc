@@ -1,7 +1,7 @@
 # taxcalc
 A simple tax calculator for food delivery couriers in Lithuania
 
-Written with Python, using Kivy and KivyMD libraries.
+Written in Python, using Kivy and KivyMD libraries.
 
 Able to scan Wolt and Bolt Food PDFs to extract earning and date data. The scanned data is then put into SQLite3 database,
 to be queried when statistics are needed.
