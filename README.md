@@ -21,6 +21,12 @@ but need to sort out the colors of the app, which are bugged in the older versio
 Screenshots:
 
 ![Main Window](/screnshots/main_window.PNG?raw=true "Main Window")
-![Main Window](/screnshots/calc_window.PNG?raw=true "Calc Window")
+![Calc Window](/screnshots/calc_window.PNG?raw=true "Calc Window")
+![Scan Window](/screnshots/scan_window.PNG?raw=true "Scan Window")
+![Stat Window](/screnshots/stat_window.PNG?raw=true "Stat Window")
+![Sett Window](/screnshots/sett_window.PNG?raw=true "Sett Window")
+![Sett Help Popup](/screnshots/sett_help_popup.PNG?raw=true "Setting help popup")
+
+
 
 
