@@ -20,5 +20,5 @@ but need to sort out the colors of the app, which are bugged in the older versio
 
 Screenshots:
 
-![Main Window](/screenshots/main_window.PNG?raw=true "Main Window")
+![Main Window](/screnshots/calc_window.PNG?raw=true "Main Window")
 
